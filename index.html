@@ -32,7 +32,6 @@
             box-shadow: 0 0 30px rgba(0, 0, 0, 0.7);
             max-width: 800px;
             width: 90%;
-            position: relative;
         }
 
         .hearts-container {
@@ -208,33 +207,6 @@
             text-decoration: line-through;
         }
 
-        /* Стили для кнопки тестового режима */
-        .test-mode-button {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background-color: rgba(255, 255, 255, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            color: white;
-            padding: 8px 15px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-family: 'Underdog', cursive;
-            font-size: 0.9em;
-            transition: all 0.3s ease;
-            z-index: 10;
-        }
-
-        .test-mode-button:hover {
-            background-color: rgba(255, 255, 255, 0.3);
-            transform: scale(1.05);
-        }
-
-        .test-mode-button.active {
-            background-color: rgba(255, 215, 0, 0.3);
-            border-color: gold;
-        }
-
         @media (max-width: 400px) {
             .container {
                 width: 95%;
@@ -260,18 +232,11 @@
             .audio-player {
                 max-width: 280px;
             }
-            
-            .test-mode-button {
-                position: static;
-                margin-bottom: 15px;
-            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <button id="testModeButton" class="test-mode-button">Тестовый режим</button>
-        
         <h1 class="main-title">Заколдованный отсчет</h1>
         
         <div class="subtitle-block">
@@ -302,7 +267,7 @@
 
     <script>
         const config = {
-            birthdayDate: '2025-12-24',
+            birthdayDate: '2025-10-27',
             backgroundImage: 'фон_основной.jpg',
             plaqueImage: 'плашка.png',
             heartImage: 'сердечко.png',
@@ -329,7 +294,6 @@
         // Добавляем отслеживание открытых сердечек
         let openedHearts = 0;
         const totalHearts = 7;
-        let testMode = false;
 
         const countdownElement = document.getElementById('countdown');
         const heartsContainer = document.querySelector('.hearts-container');
@@ -337,7 +301,6 @@
         const chapterTextElement = document.getElementById('chapterText');
         const audioElement = document.getElementById('chapterAudio');
         const closeBtn = document.querySelector('.close');
-        const testModeButton = document.getElementById('testModeButton');
 
         const birthday = new Date(config.birthdayDate);
         const startDate = new Date(birthday);
@@ -389,24 +352,19 @@
                 heart.innerHTML = `<div class="heart-number">${i}</div>`;
                 heart.style.backgroundImage = `url('${config.heartImage}')`;
 
-                // В тестовом режиме все сердечки доступны
-                if (testMode) {
+                // Проверяем, можно ли открыть это сердечко
+                if (i <= currentDay && now < birthday) {
+                    heart.addEventListener('click', () => openGift(i));
+                } else if (now >= birthday) {
+                    // Если ДР уже наступило, открываем все
                     heart.addEventListener('click', () => openGift(i));
                 } else {
-                    // Проверяем, можно ли открыть это сердечко
-                    if (i <= currentDay && now < birthday) {
-                        heart.addEventListener('click', () => openGift(i));
-                    } else if (now >= birthday) {
-                        // Если ДР уже наступило, открываем все
-                        heart.addEventListener('click', () => openGift(i));
-                    } else {
-                        heart.style.cursor = 'not-allowed';
-                        heart.style.opacity = '0.5';
-                    }
+                    heart.style.cursor = 'not-allowed';
+                    heart.style.opacity = '0.5';
                 }
 
                 // Помечаем уже открытые дни
-                if (testMode || i < currentDay && now < birthday) {
+                if (i < currentDay && now < birthday) {
                     heart.classList.add('opened');
                 } else if (now >= birthday) {
                     heart.classList.add('opened');
@@ -450,36 +408,6 @@
             }
         }
 
-        function toggleTestMode() {
-            testMode = !testMode;
-            
-            if (testMode) {
-                testModeButton.textContent = "Обычный режим";
-                testModeButton.classList.add('active');
-                
-                // Открываем все сердечки
-                const hearts = document.querySelectorAll('.heart');
-                hearts.forEach(heart => {
-                    heart.classList.add('opened');
-                    heart.style.cursor = 'pointer';
-                    heart.style.opacity = '1';
-                });
-                
-                // Обновляем счетчик открытых сердечек
-                openedHearts = totalHearts;
-                
-                // Показываем финальный текст
-                countdownElement.textContent = "Вот и перевернута последняя страница. Но разве сказка когда-нибудь кончается? Она просто становится частью тебя. Твоя сказка будет вечной. ✨";
-                countdownElement.className = "birthday-text";
-            } else {
-                testModeButton.textContent = "Тестовый режим";
-                testModeButton.classList.remove('active');
-                
-                // Перезагружаем страницу для возврата в обычный режим
-                location.reload();
-            }
-        }
-
         closeBtn.addEventListener('click', () => {
             modal.style.display = 'none';
             audioElement.pause();
@@ -493,8 +421,6 @@
                 audioElement.currentTime = 0;
             }
         });
-
-        testModeButton.addEventListener('click', toggleTestMode);
 
         updateCountdown();
         createHearts();
