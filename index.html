@@ -32,6 +32,7 @@
             box-shadow: 0 0 30px rgba(0, 0, 0, 0.7);
             max-width: 800px;
             width: 90%;
+            position: relative;
         }
 
         .hearts-container {
@@ -207,69 +208,31 @@
             text-decoration: line-through;
         }
 
-        /* Стили для тестового режима */
-        .test-mode-toggle {
-            position: fixed;
+        /* Стили для кнопки тестового режима */
+        .test-mode-button {
+            position: absolute;
             top: 20px;
             right: 20px;
-            background: rgba(0, 0, 0, 0.7);
+            background-color: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
             color: white;
-            border: 2px solid #ffeb3b;
+            padding: 8px 15px;
             border-radius: 20px;
-            padding: 10px 15px;
             cursor: pointer;
-            z-index: 1000;
             font-family: 'Underdog', cursive;
-            font-size: 14px;
+            font-size: 0.9em;
             transition: all 0.3s ease;
+            z-index: 10;
         }
 
-        .test-mode-toggle:hover {
-            background: rgba(255, 235, 59, 0.2);
+        .test-mode-button:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
         }
 
-        .test-mode-toggle.active {
-            background: rgba(255, 235, 59, 0.3);
-            box-shadow: 0 0 15px rgba(255, 235, 59, 0.5);
-        }
-
-        .test-controls {
-            position: fixed;
-            top: 70px;
-            right: 20px;
-            background: rgba(0, 0, 0, 0.8);
-            border: 1px solid #ffeb3b;
-            border-radius: 10px;
-            padding: 15px;
-            z-index: 999;
-            display: none;
-            color: white;
-            font-family: 'Georgia', serif;
-            min-width: 220px;
-        }
-
-        .test-controls h3 {
-            margin-top: 0;
-            color: #ffeb3b;
-            font-family: 'Underdog', cursive;
-        }
-
-        .test-btn {
-            background: #285e58;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            padding: 8px 12px;
-            margin: 5px;
-            cursor: pointer;
-            font-family: 'Georgia', serif;
-            transition: background 0.3s ease;
-            width: 100%;
-            text-align: left;
-        }
-
-        .test-btn:hover {
-            background: #3a7a73;
+        .test-mode-button.active {
+            background-color: rgba(255, 215, 0, 0.3);
+            border-color: gold;
         }
 
         @media (max-width: 400px) {
@@ -297,40 +260,18 @@
             .audio-player {
                 max-width: 280px;
             }
-
-            .test-mode-toggle {
-                top: 10px;
-                right: 10px;
-                font-size: 12px;
-                padding: 8px 12px;
-            }
-
-            .test-controls {
-                top: 50px;
-                right: 10px;
-                min-width: 200px;
+            
+            .test-mode-button {
+                position: static;
+                margin-bottom: 15px;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Кнопка переключения тестового режима -->
-    <div class="test-mode-toggle" id="testModeToggle">Тестовый режим</div>
-    
-    <!-- Панель управления тестовым режимом -->
-    <div class="test-controls" id="testControls">
-        <h3>Тестовый режим</h3>
-        <button class="test-btn" onclick="openAllHearts()">Открыть все сердечки</button>
-        <button class="test-btn" onclick="closeAllHearts()">Закрыть все сердечки</button>
-        <button class="test-btn" onclick="showFinalMessage()">Показать финальное послание</button>
-        <button class="test-btn" onclick="showLastStepMessage()">Показать "Сделай последний шаг"</button>
-        <button class="test-btn" onclick="simulateBirthday()">Симулировать наступление ДР</button>
-        <button class="test-btn" onclick="simulateDay(1)">Симулировать 1 день до ДР</button>
-        <button class="test-btn" onclick="simulateDay(3)">Симулировать 3 дня до ДР</button>
-        <button class="test-btn" onclick="resetToNormal()">Вернуть обычный режим</button>
-    </div>
-
     <div class="container">
+        <button id="testModeButton" class="test-mode-button">Тестовый режим</button>
+        
         <h1 class="main-title">Заколдованный отсчет</h1>
         
         <div class="subtitle-block">
@@ -388,8 +329,7 @@
         // Добавляем отслеживание открытых сердечек
         let openedHearts = 0;
         const totalHearts = 7;
-        let isTestMode = false;
-        let testSimulationDate = null;
+        let testMode = false;
 
         const countdownElement = document.getElementById('countdown');
         const heartsContainer = document.querySelector('.hearts-container');
@@ -397,8 +337,7 @@
         const chapterTextElement = document.getElementById('chapterText');
         const audioElement = document.getElementById('chapterAudio');
         const closeBtn = document.querySelector('.close');
-        const testModeToggle = document.getElementById('testModeToggle');
-        const testControls = document.getElementById('testControls');
+        const testModeButton = document.getElementById('testModeButton');
 
         const birthday = new Date(config.birthdayDate);
         const startDate = new Date(birthday);
@@ -407,102 +346,8 @@
         document.body.style.backgroundImage = `url('${config.backgroundImage}')`;
         document.querySelector('.container').style.backgroundImage = `url('${config.plaqueImage}')`;
 
-        // Функции для тестового режима
-        function toggleTestMode() {
-            isTestMode = !isTestMode;
-            if (isTestMode) {
-                testModeToggle.classList.add('active');
-                testModeToggle.textContent = 'Тестовый режим ✓';
-                testControls.style.display = 'block';
-            } else {
-                testModeToggle.classList.remove('active');
-                testModeToggle.textContent = 'Тестовый режим';
-                testControls.style.display = 'none';
-                resetToNormal();
-            }
-        }
-
-        function openAllHearts() {
-            const hearts = document.querySelectorAll('.heart');
-            hearts.forEach((heart, index) => {
-                if (!heart.classList.contains('opened')) {
-                    heart.classList.add('opened');
-                    heart.style.cursor = 'pointer';
-                    heart.style.opacity = '1';
-                    openedHearts++;
-                }
-            });
-            checkAllHeartsOpened();
-        }
-
-        function closeAllHearts() {
-            const hearts = document.querySelectorAll('.heart');
-            hearts.forEach(heart => {
-                heart.classList.remove('opened');
-            });
-            openedHearts = 0;
-            recreateHearts();
-            updateCountdown();
-        }
-
-        function showFinalMessage() {
-            countdownElement.textContent = "Вот и перевернута последняя страница. Но разве сказка когда-нибудь кончается? Она просто становится частью тебя. Твоя сказка будет вечной. ✨";
-            countdownElement.className = "birthday-text";
-            openAllHearts();
-        }
-
-        function showLastStepMessage() {
-            // Показываем сообщение "Сделай последний шаг" с частично открытыми сердечками
-            testSimulationDate = new Date(birthday);
-            recreateHearts();
-            
-            // Открываем все сердечки кроме последнего
-            const hearts = document.querySelectorAll('.heart');
-            hearts.forEach((heart, index) => {
-                if (index < hearts.length - 1) {
-                    heart.classList.add('opened');
-                    openedHearts++;
-                }
-            });
-            
-            countdownElement.textContent = "Сделай последний шаг. Произнеси вслух заветные слова: «Открываю последнюю главу» — и финальное послание явится тебе.";
-            countdownElement.className = "countdown-text";
-        }
-
-        function simulateBirthday() {
-            testSimulationDate = new Date(birthday);
-            recreateHearts();
-            updateCountdown();
-        }
-
-        function simulateDay(daysBefore) {
-            testSimulationDate = new Date(birthday);
-            testSimulationDate.setDate(birthday.getDate() - daysBefore);
-            recreateHearts();
-            updateCountdown();
-        }
-
-        function resetToNormal() {
-            testSimulationDate = null;
-            recreateHearts();
-            updateCountdown();
-        }
-
-        function recreateHearts() {
-            // Очищаем контейнер и создаем сердечки заново
-            heartsContainer.innerHTML = '';
-            openedHearts = 0;
-            createHearts();
-        }
-
-        function getCurrentDate() {
-            return testSimulationDate || new Date();
-        }
-
-        testModeToggle.addEventListener('click', toggleTestMode);
-
         function updateCountdown() {
-            const now = getCurrentDate();
+            const now = new Date();
             const timeDiff = birthday - now;
 
             if (timeDiff <= 0) {
@@ -534,7 +379,7 @@
         }
 
         function createHearts() {
-            const now = getCurrentDate();
+            const now = new Date();
             // Определяем, какой день сейчас (от 1 до 7)
             const currentDay = Math.floor((now - startDate) / (1000 * 60 * 60 * 24)) + 1;
 
@@ -544,24 +389,27 @@
                 heart.innerHTML = `<div class="heart-number">${i}</div>`;
                 heart.style.backgroundImage = `url('${config.heartImage}')`;
 
-                // Проверяем, можно ли открыть это сердечко
-                if (i <= currentDay && now < birthday) {
-                    heart.addEventListener('click', () => openGift(i));
-                } else if (now >= birthday) {
-                    // Если ДР уже наступило, открываем все
+                // В тестовом режиме все сердечки доступны
+                if (testMode) {
                     heart.addEventListener('click', () => openGift(i));
                 } else {
-                    heart.style.cursor = 'not-allowed';
-                    heart.style.opacity = '0.5';
+                    // Проверяем, можно ли открыть это сердечко
+                    if (i <= currentDay && now < birthday) {
+                        heart.addEventListener('click', () => openGift(i));
+                    } else if (now >= birthday) {
+                        // Если ДР уже наступило, открываем все
+                        heart.addEventListener('click', () => openGift(i));
+                    } else {
+                        heart.style.cursor = 'not-allowed';
+                        heart.style.opacity = '0.5';
+                    }
                 }
 
                 // Помечаем уже открытые дни
-                if (i < currentDay && now < birthday) {
+                if (testMode || i < currentDay && now < birthday) {
                     heart.classList.add('opened');
-                    openedHearts++;
                 } else if (now >= birthday) {
                     heart.classList.add('opened');
-                    openedHearts++;
                 }
 
                 heartsContainer.appendChild(heart);
@@ -592,13 +440,43 @@
         }
 
         function checkAllHeartsOpened() {
-            const now = getCurrentDate();
+            const now = new Date();
             const timeDiff = birthday - now;
             
             // Показываем финальный текст только если все сердечки открыты И наступил ДР
             if (openedHearts === totalHearts && timeDiff <= 0) {
                 countdownElement.textContent = "Вот и перевернута последняя страница. Но разве сказка когда-нибудь кончается? Она просто становится частью тебя. Твоя сказка будет вечной. ✨";
                 countdownElement.className = "birthday-text";
+            }
+        }
+
+        function toggleTestMode() {
+            testMode = !testMode;
+            
+            if (testMode) {
+                testModeButton.textContent = "Обычный режим";
+                testModeButton.classList.add('active');
+                
+                // Открываем все сердечки
+                const hearts = document.querySelectorAll('.heart');
+                hearts.forEach(heart => {
+                    heart.classList.add('opened');
+                    heart.style.cursor = 'pointer';
+                    heart.style.opacity = '1';
+                });
+                
+                // Обновляем счетчик открытых сердечек
+                openedHearts = totalHearts;
+                
+                // Показываем финальный текст
+                countdownElement.textContent = "Вот и перевернута последняя страница. Но разве сказка когда-нибудь кончается? Она просто становится частью тебя. Твоя сказка будет вечной. ✨";
+                countdownElement.className = "birthday-text";
+            } else {
+                testModeButton.textContent = "Тестовый режим";
+                testModeButton.classList.remove('active');
+                
+                // Перезагружаем страницу для возврата в обычный режим
+                location.reload();
             }
         }
 
@@ -615,6 +493,8 @@
                 audioElement.currentTime = 0;
             }
         });
+
+        testModeButton.addEventListener('click', toggleTestMode);
 
         updateCountdown();
         createHearts();
