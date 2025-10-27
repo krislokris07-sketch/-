@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Календарь ожидания твоего Дня Рождения!</title>
     <link href="https://fonts.googleapis.com/css2?family=Underdog&display=swap&subset=cyrillic" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
     <style>
         body {
             margin: 0;
@@ -19,6 +20,7 @@
             background: url('фон_основной.jpg') no-repeat center center;
             background-size: cover;
             background-attachment: fixed;
+            overflow: hidden;
         }
 
         .container {
@@ -32,6 +34,8 @@
             box-shadow: 0 0 30px rgba(0, 0, 0, 0.7);
             max-width: 800px;
             width: 90%;
+            position: relative;
+            z-index: 10;
         }
 
         .hearts-container {
@@ -143,6 +147,7 @@
             left: 50%;
             top: 50%;
             transform: translate(-50%, -50%);
+            z-index: 101;
         }
 
         .image-container {
@@ -191,7 +196,7 @@
             top: -40px;
             right: -10px;
             cursor: pointer;
-            z-index: 101;
+            z-index: 102;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
         }
 
@@ -267,7 +272,7 @@
 
     <script>
         const config = {
-            birthdayDate: '2025-10-27',
+            birthdayDate: '2025-12-24',
             backgroundImage: 'фон_основной.jpg',
             plaqueImage: 'плашка.png',
             heartImage: 'сердечко.png',
@@ -296,6 +301,7 @@
         let openedHearts = 0;
         const totalHearts = 7;
         let lastStepAudioPlayed = false;
+        let confettiLaunched = false;
 
         const countdownElement = document.getElementById('countdown');
         const heartsContainer = document.querySelector('.hearts-container');
@@ -311,6 +317,37 @@
         document.body.style.backgroundImage = `url('${config.backgroundImage}')`;
         document.querySelector('.container').style.backgroundImage = `url('${config.plaqueImage}')`;
 
+        // Функция для запуска блесток
+        function launchConfetti() {
+            if (confettiLaunched) return;
+            confettiLaunched = true;
+            
+            const duration = 5000;
+            const end = Date.now() + duration;
+            const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff', '#ffffff'];
+            
+            (function frame() {
+                confetti({
+                    particleCount: 3,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0 },
+                    colors: colors
+                });
+                confetti({
+                    particleCount: 3,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 1 },
+                    colors: colors
+                });
+                
+                if (Date.now() < end) {
+                    requestAnimationFrame(frame);
+                }
+            }());
+        }
+
         function updateCountdown() {
             const now = new Date();
             const timeDiff = birthday - now;
@@ -320,11 +357,14 @@
                 if (openedHearts === totalHearts) {
                     countdownElement.textContent = "Вот и перевернута последняя страница. Но разве сказка когда-нибудь кончается? Она просто становится частью тебя. Твоя сказка будет вечной. ✨";
                     countdownElement.className = "birthday-text";
+                    
+                    // ЗАПУСКАЕМ БЛЕСТКИ ПРИ ФИНАЛЬНОМ ПОСЛАНИИ
+                    launchConfetti();
                 } else {
                     countdownElement.textContent = "Сделай последний шаг. Произнеси вслух заветные слова: «Открываю последнюю главу» — и финальное послание явится тебе.";
                     countdownElement.className = "countdown-text";
                     
-                    // ВОСПРОИЗВОДИМ ТВОЕ АУДИО ДЛЯ ПОСЛЕДНЕГО ШАГА
+                    // ВОСПРОИЗВОДИМ АУДИО ДЛЯ ПОСЛЕДНЕГО ШАГА
                     if (openedHearts === totalHearts - 1 && !lastStepAudioPlayed) {
                         const lastStepAudio = new Audio(config.specialAudio);
                         lastStepAudio.play().catch(e => {
@@ -416,6 +456,9 @@
             if (openedHearts === totalHearts && timeDiff <= 0) {
                 countdownElement.textContent = "Вот и перевернута последняя страница. Но разве сказка когда-нибудь кончается? Она просто становится частью тебя. Твоя сказка будет вечной. ✨";
                 countdownElement.className = "birthday-text";
+                
+                // ЗАПУСКАЕМ БЛЕСТКИ!
+                launchConfetti();
             }
         }
 
