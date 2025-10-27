@@ -245,7 +245,7 @@
             display: none;
             color: white;
             font-family: 'Georgia', serif;
-            min-width: 200px;
+            min-width: 220px;
         }
 
         .test-controls h3 {
@@ -264,6 +264,8 @@
             cursor: pointer;
             font-family: 'Georgia', serif;
             transition: background 0.3s ease;
+            width: 100%;
+            text-align: left;
         }
 
         .test-btn:hover {
@@ -306,7 +308,7 @@
             .test-controls {
                 top: 50px;
                 right: 10px;
-                min-width: 180px;
+                min-width: 200px;
             }
         }
     </style>
@@ -321,6 +323,7 @@
         <button class="test-btn" onclick="openAllHearts()">Открыть все сердечки</button>
         <button class="test-btn" onclick="closeAllHearts()">Закрыть все сердечки</button>
         <button class="test-btn" onclick="showFinalMessage()">Показать финальное послание</button>
+        <button class="test-btn" onclick="showLastStepMessage()">Показать "Сделай последний шаг"</button>
         <button class="test-btn" onclick="simulateBirthday()">Симулировать наступление ДР</button>
         <button class="test-btn" onclick="simulateDay(1)">Симулировать 1 день до ДР</button>
         <button class="test-btn" onclick="simulateDay(3)">Симулировать 3 дня до ДР</button>
@@ -446,6 +449,24 @@
             countdownElement.textContent = "Вот и перевернута последняя страница. Но разве сказка когда-нибудь кончается? Она просто становится частью тебя. Твоя сказка будет вечной. ✨";
             countdownElement.className = "birthday-text";
             openAllHearts();
+        }
+
+        function showLastStepMessage() {
+            // Показываем сообщение "Сделай последний шаг" с частично открытыми сердечками
+            testSimulationDate = new Date(birthday);
+            recreateHearts();
+            
+            // Открываем все сердечки кроме последнего
+            const hearts = document.querySelectorAll('.heart');
+            hearts.forEach((heart, index) => {
+                if (index < hearts.length - 1) {
+                    heart.classList.add('opened');
+                    openedHearts++;
+                }
+            });
+            
+            countdownElement.textContent = "Сделай последний шаг. Произнеси вслух заветные слова: «Открываю последнюю главу» — и финальное послание явится тебе.";
+            countdownElement.className = "countdown-text";
         }
 
         function simulateBirthday() {
