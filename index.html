@@ -267,7 +267,7 @@
 
     <script>
         const config = {
-            birthdayDate: '2025-10-27',
+            birthdayDate: '2025-12-24',
             backgroundImage: 'фон_основной.jpg',
             plaqueImage: 'плашка.png',
             heartImage: 'сердечко.png',
@@ -295,6 +295,12 @@
         let openedHearts = 0;
         const totalHearts = 7;
 
+        // ВРЕМЕННЫЙ ТЕСТОВЫЙ РЕЖИМ - УДАЛИ ПОСЛЕ ПРОВЕРКИ
+        const testMode = true;
+        if (testMode) {
+            openedHearts = 6; // Имитируем что открыто 6 сердечек
+        }
+
         const countdownElement = document.getElementById('countdown');
         const heartsContainer = document.querySelector('.hearts-container');
         const modal = document.getElementById('giftModal');
@@ -313,10 +319,31 @@
             const now = new Date();
             const timeDiff = birthday - now;
 
+            // ВРЕМЕННЫЙ ТЕСТ - всегда показываем тестовое сообщение
+            if (testMode) {
+                if (openedHearts === totalHearts) {
+                    countdownElement.textContent = "Вот и перевернута последняя страница. Но разве сказка когда-нибудь кончается? Она просто становится частью тебя. Твоя сказка будет вечной. ✨";
+                    countdownElement.className = "birthday-text";
+                } else {
+                    countdownElement.textContent = "Сделай последний шаг. Произнеси вслух заветные слова: «Открываю последнюю главу» — и финальное послание явится тебе.";
+                    countdownElement.className = "countdown-text";
+                }
+                
+                // Показываем все сердечки как открытые
+                const hearts = document.querySelectorAll('.heart');
+                hearts.forEach(heart => {
+                    heart.classList.add('opened');
+                    heart.style.cursor = 'pointer';
+                    heart.style.opacity = '1';
+                });
+                return;
+            }
+
             if (timeDiff <= 0) {
                 // Проверяем, все ли сердечки открыты перед показом текста
                 if (openedHearts === totalHearts) {
-                    showFinalMessage();
+                    countdownElement.textContent = "Вот и перевернута последняя страница. Но разве сказка когда-нибудь кончается? Она просто становится частью тебя. Твоя сказка будет вечной. ✨";
+                    countdownElement.className = "birthday-text";
                 } else {
                     countdownElement.textContent = "Сделай последний шаг. Произнеси вслух заветные слова: «Открываю последнюю главу» — и финальное послание явится тебе.";
                     countdownElement.className = "countdown-text";
@@ -340,14 +367,27 @@
             countdownElement.textContent = `${days} дней, ${hours} часов и ${minutes} минут`;
         }
 
-        function showFinalMessage() {
-            countdownElement.textContent = "Вот и перевернута последняя страница. Но разве сказка когда-нибудь кончается? Она просто становится частью тебя. Твоя сказка будет вечной. ✨";
-            countdownElement.className = "birthday-text";
-        }
-
         function createHearts() {
+            // ВРЕМЕННЫЙ ТЕСТ - все сердечки активны
+            if (testMode) {
+                for (let i = 1; i <= 7; i++) {
+                    const heart = document.createElement('div');
+                    heart.className = 'heart';
+                    heart.innerHTML = `<div class="heart-number">${i}</div>`;
+                    heart.style.backgroundImage = `url('${config.heartImage}')`;
+                    heart.addEventListener('click', () => openGift(i));
+                    
+                    // Помечаем первые 6 сердечек как уже открытые
+                    if (i <= 6) {
+                        heart.classList.add('opened');
+                    }
+                    
+                    heartsContainer.appendChild(heart);
+                }
+                return;
+            }
+
             const now = new Date();
-            // Определяем, какой день сейчас (от 1 до 7)
             const currentDay = Math.floor((now - startDate) / (1000 * 60 * 60 * 24)) + 1;
 
             for (let i = 1; i <= 7; i++) {
@@ -356,31 +396,23 @@
                 heart.innerHTML = `<div class="heart-number">${i}</div>`;
                 heart.style.backgroundImage = `url('${config.heartImage}')`;
 
-                // Проверяем, можно ли открыть это сердечко
                 if (i <= currentDay && now < birthday) {
                     heart.addEventListener('click', () => openGift(i));
                 } else if (now >= birthday) {
-                    // Если ДР уже наступило, открываем все
                     heart.addEventListener('click', () => openGift(i));
                 } else {
                     heart.style.cursor = 'not-allowed';
                     heart.style.opacity = '0.5';
                 }
 
-                // Помечаем уже открытые дни
                 if (i < currentDay && now < birthday) {
                     heart.classList.add('opened');
-                    openedHearts++;
                 } else if (now >= birthday) {
                     heart.classList.add('opened');
-                    openedHearts++;
                 }
 
                 heartsContainer.appendChild(heart);
             }
-
-            // Проверяем после создания всех сердечек, не нужно ли показать финальное сообщение
-            checkAllHeartsOpened();
         }
 
         function openGift(dayNumber) {
@@ -401,7 +433,6 @@
                 currentHeart.style.opacity = '1';
                 openedHearts++;
                 
-                // Проверяем, все ли сердечки открыты (для случая, если ДР уже наступило)
                 checkAllHeartsOpened();
             }
         }
@@ -410,9 +441,9 @@
             const now = new Date();
             const timeDiff = birthday - now;
             
-            // Показываем финальный текст только если все сердечки открыты И наступил ДР
-            if (openedHearts === totalHearts && timeDiff <= 0) {
-                showFinalMessage();
+            if (openedHearts === totalHearts && (timeDiff <= 0 || testMode)) {
+                countdownElement.textContent = "Вот и перевернута последняя страница. Но разве сказка когда-нибудь кончается? Она просто становится частью тебя. Твоя сказка будет вечной. ✨";
+                countdownElement.className = "birthday-text";
             }
         }
 
