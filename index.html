@@ -32,7 +32,6 @@
             box-shadow: 0 0 30px rgba(0, 0, 0, 0.7);
             max-width: 800px;
             width: 90%;
-            position: relative;
         }
 
         .hearts-container {
@@ -208,54 +207,6 @@
             text-decoration: line-through;
         }
 
-        /* Стили для кнопки тестового режима */
-        .test-mode-button {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background-color: rgba(255, 255, 255, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            color: white;
-            padding: 8px 15px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-family: 'Underdog', cursive;
-            font-size: 0.9em;
-            transition: all 0.3s ease;
-            z-index: 10;
-        }
-
-        .test-mode-button:hover {
-            background-color: rgba(255, 255, 255, 0.3);
-            transform: scale(1.05);
-        }
-
-        .test-mode-button.active {
-            background-color: rgba(255, 215, 0, 0.3);
-            border-color: gold;
-        }
-
-        .reset-button {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            background-color: rgba(255, 100, 100, 0.3);
-            border: 1px solid rgba(255, 100, 100, 0.5);
-            color: white;
-            padding: 8px 15px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-family: 'Underdog', cursive;
-            font-size: 0.9em;
-            transition: all 0.3s ease;
-            z-index: 10;
-        }
-
-        .reset-button:hover {
-            background-color: rgba(255, 100, 100, 0.5);
-            transform: scale(1.05);
-        }
-
         @media (max-width: 400px) {
             .container {
                 width: 95%;
@@ -281,19 +232,11 @@
             .audio-player {
                 max-width: 280px;
             }
-            
-            .test-mode-button, .reset-button {
-                position: static;
-                margin-bottom: 15px;
-            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <button id="testModeButton" class="test-mode-button">Тестовый режим</button>
-        <button id="resetButton" class="reset-button" style="display: none;">Сбросить прогресс</button>
-        
         <h1 class="main-title">Заколдованный отсчет</h1>
         
         <div class="subtitle-block">
@@ -324,7 +267,7 @@
 
     <script>
         const config = {
-            birthdayDate: '2025-12-24',
+            birthdayDate: '2025-10-27',
             backgroundImage: 'фон_основной.jpg',
             plaqueImage: 'плашка.png',
             heartImage: 'сердечко.png',
@@ -351,7 +294,6 @@
         // Добавляем отслеживание открытых сердечек
         let openedHearts = 0;
         const totalHearts = 7;
-        let testMode = false;
 
         const countdownElement = document.getElementById('countdown');
         const heartsContainer = document.querySelector('.hearts-container');
@@ -359,8 +301,6 @@
         const chapterTextElement = document.getElementById('chapterText');
         const audioElement = document.getElementById('chapterAudio');
         const closeBtn = document.querySelector('.close');
-        const testModeButton = document.getElementById('testModeButton');
-        const resetButton = document.getElementById('resetButton');
 
         const birthday = new Date(config.birthdayDate);
         const startDate = new Date(birthday);
@@ -376,12 +316,19 @@
             if (timeDiff <= 0) {
                 // Проверяем, все ли сердечки открыты перед показом текста
                 if (openedHearts === totalHearts) {
-                    countdownElement.textContent = "Вот и перевернута последняя страница. Но разве сказка когда-нибудь кончается? Она просто становится частью тебя. Твоя сказка будет вечной. ✨";
-                    countdownElement.className = "birthday-text";
+                    showFinalMessage();
                 } else {
                     countdownElement.textContent = "Сделай последний шаг. Произнеси вслух заветные слова: «Открываю последнюю главу» — и финальное послание явится тебе.";
                     countdownElement.className = "countdown-text";
                 }
+                
+                // Показываем все сердечки как открытые
+                const hearts = document.querySelectorAll('.heart');
+                hearts.forEach(heart => {
+                    heart.classList.add('opened');
+                    heart.style.cursor = 'pointer';
+                    heart.style.opacity = '1';
+                });
                 return;
             }
 
@@ -393,10 +340,13 @@
             countdownElement.textContent = `${days} дней, ${hours} часов и ${minutes} минут`;
         }
 
+        function showFinalMessage() {
+            countdownElement.textContent = "Вот и перевернута последняя страница. Но разве сказка когда-нибудь кончается? Она просто становится частью тебя. Твоя сказка будет вечной. ✨";
+            countdownElement.className = "birthday-text";
+        }
+
         function createHearts() {
-            heartsContainer.innerHTML = '';
             const now = new Date();
-            
             // Определяем, какой день сейчас (от 1 до 7)
             const currentDay = Math.floor((now - startDate) / (1000 * 60 * 60 * 24)) + 1;
 
@@ -406,37 +356,31 @@
                 heart.innerHTML = `<div class="heart-number">${i}</div>`;
                 heart.style.backgroundImage = `url('${config.heartImage}')`;
 
-                // В тестовом режиме все сердечки доступны и не помечены как открытые
-                if (testMode) {
+                // Проверяем, можно ли открыть это сердечко
+                if (i <= currentDay && now < birthday) {
                     heart.addEventListener('click', () => openGift(i));
-                    heart.style.cursor = 'pointer';
-                    heart.style.opacity = '1';
-                    
-                    // Помечаем как открытые только те, которые уже были открыты
-                    if (i <= openedHearts) {
-                        heart.classList.add('opened');
-                    }
+                } else if (now >= birthday) {
+                    // Если ДР уже наступило, открываем все
+                    heart.addEventListener('click', () => openGift(i));
                 } else {
-                    // Обычный режим - стандартная логика
-                    if (i <= currentDay && now < birthday) {
-                        heart.addEventListener('click', () => openGift(i));
-                    } else if (now >= birthday) {
-                        heart.addEventListener('click', () => openGift(i));
-                    } else {
-                        heart.style.cursor = 'not-allowed';
-                        heart.style.opacity = '0.5';
-                    }
+                    heart.style.cursor = 'not-allowed';
+                    heart.style.opacity = '0.5';
+                }
 
-                    // Помечаем уже открытые дни
-                    if (i < currentDay && now < birthday) {
-                        heart.classList.add('opened');
-                    } else if (now >= birthday) {
-                        heart.classList.add('opened');
-                    }
+                // Помечаем уже открытые дни
+                if (i < currentDay && now < birthday) {
+                    heart.classList.add('opened');
+                    openedHearts++;
+                } else if (now >= birthday) {
+                    heart.classList.add('opened');
+                    openedHearts++;
                 }
 
                 heartsContainer.appendChild(heart);
             }
+
+            // Проверяем после создания всех сердечек, не нужно ли показать финальное сообщение
+            checkAllHeartsOpened();
         }
 
         function openGift(dayNumber) {
@@ -457,7 +401,7 @@
                 currentHeart.style.opacity = '1';
                 openedHearts++;
                 
-                // Проверяем, все ли сердечки открыты
+                // Проверяем, все ли сердечки открыты (для случая, если ДР уже наступило)
                 checkAllHeartsOpened();
             }
         }
@@ -466,45 +410,9 @@
             const now = new Date();
             const timeDiff = birthday - now;
             
-            // Показываем финальный текст только если все сердечки открыты
-            if (openedHearts === totalHearts) {
-                if (timeDiff <= 0 || testMode) {
-                    countdownElement.textContent = "Вот и перевернута последняя страница. Но разве сказка когда-нибудь кончается? Она просто становится частью тебя. Твоя сказка будет вечной. ✨";
-                    countdownElement.className = "birthday-text";
-                }
-            }
-        }
-
-        function toggleTestMode() {
-            testMode = !testMode;
-            
-            if (testMode) {
-                testModeButton.textContent = "Обычный режим";
-                testModeButton.classList.add('active');
-                resetButton.style.display = 'block';
-                
-                // Сбрасываем счетчик открытых сердечек в тестовом режиме
-                openedHearts = 0;
-                
-                // Обновляем отображение
-                updateCountdown();
-                createHearts();
-                
-            } else {
-                testModeButton.textContent = "Тестовый режим";
-                testModeButton.classList.remove('active');
-                resetButton.style.display = 'none';
-                
-                // Перезагружаем страницу для возврата в обычный режим
-                location.reload();
-            }
-        }
-
-        function resetProgress() {
-            if (testMode) {
-                openedHearts = 0;
-                updateCountdown();
-                createHearts();
+            // Показываем финальный текст только если все сердечки открыты И наступил ДР
+            if (openedHearts === totalHearts && timeDiff <= 0) {
+                showFinalMessage();
             }
         }
 
@@ -521,9 +429,6 @@
                 audioElement.currentTime = 0;
             }
         });
-
-        testModeButton.addEventListener('click', toggleTestMode);
-        resetButton.addEventListener('click', resetProgress);
 
         updateCountdown();
         createHearts();
