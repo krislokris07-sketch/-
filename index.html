@@ -473,14 +473,16 @@
         function createHearts() {
             const now = testMode ? testCurrentDate : new Date();
             const birthday = testMode ? testBirthdayDate : new Date(config.birthdayDate);
+            
+            // Начинаем отсчет за 6 дней до ДР (18 декабря для ДР 24 декабря)
             const startDate = new Date(birthday);
-            startDate.setDate(birthday.getDate() - 7);
+            startDate.setDate(birthday.getDate() - 6);
             
             // Определяем, сколько дней прошло с начала отсчета
             const daysPassed = Math.floor((now - startDate) / (1000 * 60 * 60 * 24));
             
             // Определяем, какой день сейчас (от 1 до 7)
-            // День 1 = за 7 дней до ДР, день 7 = в день ДР
+            // День 1 = 18 декабря, день 7 = 24 декабря
             const currentDay = Math.min(Math.max(daysPassed + 1, 1), 7);
 
             // Очищаем контейнер перед созданием новых сердечек
@@ -515,7 +517,11 @@
             // Обновляем информацию в тестовом режиме
             if (testMode) {
                 const daysUntilBirthday = Math.floor((birthday - now) / (1000 * 60 * 60 * 24));
-                testInfoElement.textContent = `До ДР: ${daysUntilBirthday} дней, текущий день: ${currentDay}`;
+                const startDateDisplay = new Date(birthday);
+                startDateDisplay.setDate(birthday.getDate() - 6);
+                testInfoElement.innerHTML = `До ДР: ${daysUntilBirthday} дней<br>
+                                           Текущий день: ${currentDay}<br>
+                                           Отсчет с: ${startDateDisplay.toLocaleDateString()}`;
             }
         }
 
