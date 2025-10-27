@@ -212,44 +212,6 @@
             text-decoration: line-through;
         }
 
-        /* Стили для тестового режима */
-        .test-mode {
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            background-color: rgba(0, 0, 0, 0.7);
-            padding: 10px;
-            border-radius: 5px;
-            z-index: 1000;
-            color: white;
-            font-size: 14px;
-        }
-        
-        .test-mode button {
-            background-color: #4CAF50;
-            border: none;
-            color: white;
-            padding: 5px 10px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 12px;
-            margin: 2px;
-            cursor: pointer;
-            border-radius: 3px;
-        }
-        
-        .test-mode button:hover {
-            background-color: #45a049;
-        }
-        
-        .test-mode select {
-            padding: 5px;
-            border-radius: 3px;
-            border: none;
-            margin: 2px;
-        }
-
         @media (max-width: 400px) {
             .container {
                 width: 95%;
@@ -275,36 +237,10 @@
             .audio-player {
                 max-width: 280px;
             }
-            
-            .test-mode {
-                position: relative;
-                top: 0;
-                right: 0;
-                margin-bottom: 20px;
-            }
         }
     </style>
 </head>
 <body>
-    <!-- Тестовый режим -->
-    <div class="test-mode">
-        <strong>Тестовый режим</strong>
-        <div>
-            <label>Дата ДР: </label>
-            <input type="date" id="testBirthdayDate" value="2025-12-24">
-        </div>
-        <div>
-            <label>Текущая дата: </label>
-            <input type="date" id="testCurrentDate">
-        </div>
-        <div>
-            <button id="testApplyDate">Применить дату</button>
-            <button id="testReset">Сбросить</button>
-            <button id="testOpenAll">Открыть все</button>
-        </div>
-        <div id="testInfo"></div>
-    </div>
-
     <div class="container">
         <h1 class="main-title">Заколдованный отсчет</h1>
         
@@ -367,28 +303,12 @@
         let lastStepAudioPlayed = false;
         let confettiLaunched = false;
 
-        // Переменные для тестового режима
-        let testMode = true;
-        let testBirthdayDate = new Date(config.birthdayDate);
-        let testCurrentDate = new Date();
-
         const countdownElement = document.getElementById('countdown');
         const heartsContainer = document.querySelector('.hearts-container');
         const modal = document.getElementById('giftModal');
         const chapterTextElement = document.getElementById('chapterText');
         const audioElement = document.getElementById('chapterAudio');
         const closeBtn = document.querySelector('.close');
-
-        // Элементы тестового режима
-        const testBirthdayDateInput = document.getElementById('testBirthdayDate');
-        const testCurrentDateInput = document.getElementById('testCurrentDate');
-        const testApplyDateBtn = document.getElementById('testApplyDate');
-        const testResetBtn = document.getElementById('testReset');
-        const testOpenAllBtn = document.getElementById('testOpenAll');
-        const testInfoElement = document.getElementById('testInfo');
-
-        // Устанавливаем текущую дату в поле ввода
-        testCurrentDateInput.valueAsDate = testCurrentDate;
 
         // Функция для запуска блесток
         function launchConfetti() {
@@ -422,8 +342,8 @@
         }
 
         function updateCountdown() {
-            const now = testMode ? testCurrentDate : new Date();
-            const birthday = testMode ? testBirthdayDate : new Date(config.birthdayDate);
+            const now = new Date();
+            const birthday = new Date(config.birthdayDate);
             const timeDiff = birthday - now;
 
             // Сбрасываем счетчик открытых сердечек при обновлении
@@ -471,8 +391,8 @@
         }
 
         function createHearts() {
-            const now = testMode ? testCurrentDate : new Date();
-            const birthday = testMode ? testBirthdayDate : new Date(config.birthdayDate);
+            const now = new Date();
+            const birthday = new Date(config.birthdayDate);
             
             // Начинаем отсчет за 6 дней до ДР (18 декабря для ДР 24 декабря)
             const startDate = new Date(birthday);
@@ -513,16 +433,6 @@
 
                 heartsContainer.appendChild(heart);
             }
-            
-            // Обновляем информацию в тестовом режиме
-            if (testMode) {
-                const daysUntilBirthday = Math.floor((birthday - now) / (1000 * 60 * 60 * 24));
-                const startDateDisplay = new Date(birthday);
-                startDateDisplay.setDate(birthday.getDate() - 6);
-                testInfoElement.innerHTML = `До ДР: ${daysUntilBirthday} дней<br>
-                                           Текущий день: ${currentDay}<br>
-                                           Отсчет с: ${startDateDisplay.toLocaleDateString()}`;
-            }
         }
 
         function openGift(dayNumber) {
@@ -548,8 +458,8 @@
         }
 
         function checkAllHeartsOpened() {
-            const now = testMode ? testCurrentDate : new Date();
-            const birthday = testMode ? testBirthdayDate : new Date(config.birthdayDate);
+            const now = new Date();
+            const birthday = new Date(config.birthdayDate);
             const timeDiff = birthday - now;
             
             // Показываем финальный текст только если все сердечки открыты И наступил ДР
@@ -574,41 +484,6 @@
                 audioElement.pause();
                 audioElement.currentTime = 0;
             }
-        });
-
-        // Обработчики для тестового режима
-        testApplyDateBtn.addEventListener('click', () => {
-            testBirthdayDate = new Date(testBirthdayDateInput.value);
-            testCurrentDate = new Date(testCurrentDateInput.value);
-            openedHearts = 0;
-            lastStepAudioPlayed = false;
-            confettiLaunched = false;
-            updateCountdown();
-            createHearts();
-        });
-
-        testResetBtn.addEventListener('click', () => {
-            testBirthdayDate = new Date(config.birthdayDate);
-            testCurrentDate = new Date();
-            testBirthdayDateInput.value = config.birthdayDate;
-            testCurrentDateInput.valueAsDate = testCurrentDate;
-            openedHearts = 0;
-            lastStepAudioPlayed = false;
-            confettiLaunched = false;
-            updateCountdown();
-            createHearts();
-        });
-
-        testOpenAllBtn.addEventListener('click', () => {
-            const hearts = document.querySelectorAll('.heart');
-            hearts.forEach((heart, index) => {
-                if (!heart.classList.contains('opened')) {
-                    heart.classList.add('opened');
-                    heart.style.opacity = '1';
-                    openedHearts++;
-                }
-            });
-            checkAllHeartsOpened();
         });
 
         // Инициализация
