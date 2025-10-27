@@ -17,7 +17,7 @@
             font-family: 'Georgia', 'Times New Roman', serif;
             color: white;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
-            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            background: url('фон_основной.jpg') no-repeat center center;
             background-size: cover;
             background-attachment: fixed;
             overflow: hidden;
@@ -28,7 +28,7 @@
             background-color: rgba(0, 0, 0, 0.5);
             padding: 30px;
             border-radius: 20px;
-            background-image: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+            background-image: url('плашка.png');
             background-size: cover;
             background-position: center;
             box-shadow: 0 0 30px rgba(0, 0, 0, 0.7);
@@ -36,7 +36,6 @@
             width: 90%;
             position: relative;
             z-index: 10;
-            border: 1px solid rgba(255,255,255,0.2);
         }
 
         .hearts-container {
@@ -44,7 +43,6 @@
             justify-content: space-around;
             flex-wrap: wrap;
             gap: 20px;
-            margin-top: 20px;
         }
         
         .main-title {
@@ -82,7 +80,7 @@
             margin-bottom: 30px;
             font-weight: bold;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
-            color: #ffeb3b;
+            color: #285e58;
             font-family: 'Underdog';
         }
 
@@ -91,7 +89,7 @@
             margin-bottom: 30px;
             font-weight: bold;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
-            color: #ffeb3b;
+            color: #285e58;
             font-family: 'Underdog';
             text-transform: none;
             line-height: 1.4;
@@ -105,24 +103,22 @@
             cursor: pointer;
             position: relative;
             transition: transform 0.3s ease;
-            background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
-            border-radius: 50%;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            background: url('сердечко.png') no-repeat center center;
+            background-size: contain;
         }
 
         .heart:hover {
             transform: scale(1.1);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
         }
 
         .heart-number {
-            font-size: 2.5em;
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2em;
             font-weight: bold;
             color: #fff;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
         }
 
         .modal {
@@ -135,43 +131,70 @@
             height: 100%;
             background-color: rgba(0, 0, 0, 0.8);
             backdrop-filter: blur(5px);
+            background-attachment: fixed;
         }
 
-        .modal-content {
-            background: linear-gradient(135deg, #1e3c72, #2a5298);
+        .modal-content-image {
+            background: transparent;
             margin: 10% auto;
-            padding: 30px;
-            border-radius: 15px;
-            width: 80%;
-            max-width: 500px;
+            padding: 0;
+            border-radius: 0;
+            width: 90%;
+            max-width: 350px;
             text-align: center;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            box-shadow: none;
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 101;
+        }
+
+        .image-container {
             position: relative;
-            border: 2px solid rgba(255,255,255,0.2);
+            display: inline-block;
+        }
+
+        .image-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         }
 
         .chapter-text {
-            color: white;
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: black;
             text-align: center;
-            font-size: 16px;
-            line-height: 1.6;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+            width: 80%;
+            font-size: 13px; 
+            line-height: 1.3;
+            text-shadow: none;
             white-space: pre-line;
-            margin: 20px 0;
+            max-height: 60%;
+            overflow-y: auto;
+            padding: 35px;
+            box-sizing: border-box;
         }
 
         .audio-player {
-            width: 100%;
-            margin: 20px 0;
+            width: 150px;
+            height: 30px;
+            margin: 10px auto;
+            opacity: 0.8;
         }
 
         .close {
             color: white;
-            position: absolute;
-            top: 15px;
-            right: 20px;
-            font-size: 28px;
+            float: right;
+            font-size: 32px;
             font-weight: bold;
+            position: absolute;
+            top: -40px;
+            right: -10px;
             cursor: pointer;
             z-index: 102;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
@@ -184,81 +207,50 @@
         .heart.opened {
             opacity: 0.7;
             filter: brightness(0.8);
-            background: linear-gradient(135deg, #c9c9c9, #e0e0e0);
         }
         .heart.opened .heart-number {
             text-decoration: line-through;
-            color: #888;
         }
 
-        /* Стили для пользовательского режима */
-        .user-mode-panel {
+        /* Стили для тестового режима */
+        .test-mode {
             position: fixed;
             top: 10px;
             right: 10px;
-            background: rgba(0, 0, 0, 0.8);
-            padding: 15px;
-            border-radius: 10px;
-            z-index: 1000;
-            color: white;
-            font-family: Arial, sans-serif;
-            font-size: 14px;
-            max-width: 300px;
-            border: 1px solid rgba(255,255,255,0.2);
-        }
-
-        .user-mode-panel h3 {
-            margin-top: 0;
-            margin-bottom: 10px;
-            color: #ffeb3b;
-            text-align: center;
-        }
-
-        .user-mode-panel button {
-            width: 100%;
-            margin-bottom: 10px;
+            background-color: rgba(0, 0, 0, 0.7);
             padding: 10px;
             border-radius: 5px;
-            border: none;
-            background: linear-gradient(135deg, #4CAF50, #45a049);
+            z-index: 1000;
             color: white;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s;
+            font-size: 14px;
         }
-
-        .user-mode-panel button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        }
-
-        .user-mode-panel .status {
-            margin-top: 10px;
-            padding-top: 10px;
-            border-top: 1px solid rgba(255, 255, 255, 0.3);
-            font-size: 12px;
+        
+        .test-mode button {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 5px 10px;
             text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 12px;
+            margin: 2px;
+            cursor: pointer;
+            border-radius: 3px;
+        }
+        
+        .test-mode button:hover {
+            background-color: #45a049;
+        }
+        
+        .test-mode select {
+            padding: 5px;
+            border-radius: 3px;
+            border: none;
+            margin: 2px;
         }
 
-        .user-mode-panel .heart-controls {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-        }
-
-        .user-mode-panel .heart-controls button {
-            width: 48%;
-        }
-
-        @media (max-width: 768px) {
-            .user-mode-panel {
-                position: relative;
-                top: auto;
-                right: auto;
-                margin: 0 auto 20px;
-                max-width: 90%;
-            }
-            
+        @media (max-width: 400px) {
             .container {
                 width: 95%;
                 padding: 20px;
@@ -269,29 +261,48 @@
                 height: 100px;
             }
             
-            .modal-content {
+            .modal-content-image {
                 margin: 5% auto;
-                width: 90%;
+                max-width: 320px;
             }
             
             .chapter-text {
-                font-size: 14px;
+                font-size: 12px;
+                width: 85%;
+                padding: 25px;
+            }
+            
+            .audio-player {
+                max-width: 280px;
+            }
+            
+            .test-mode {
+                position: relative;
+                top: 0;
+                right: 0;
+                margin-bottom: 20px;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Панель пользовательского режима -->
-    <div class="user-mode-panel">
-        <h3>Пользовательский режим</h3>
-        <button id="enableUserMode">Включить пользовательский режим</button>
-        <div class="heart-controls">
-            <button id="openNextHeart">Открыть следующее сердечко</button>
-            <button id="openAllHearts">Открыть все сердечки</button>
+    <!-- Тестовый режим -->
+    <div class="test-mode">
+        <strong>Тестовый режим</strong>
+        <div>
+            <label>Дата ДР: </label>
+            <input type="date" id="testBirthdayDate" value="2025-12-24">
         </div>
-        <button id="resetHearts">Сбросить все сердечки</button>
-        <button id="disableUserMode">Выключить пользовательский режим</button>
-        <div class="status" id="userModeStatus">Режим: обычный</div>
+        <div>
+            <label>Текущая дата: </label>
+            <input type="date" id="testCurrentDate">
+        </div>
+        <div>
+            <button id="testApplyDate">Применить дату</button>
+            <button id="testReset">Сбросить</button>
+            <button id="testOpenAll">Открыть все</button>
+        </div>
+        <div id="testInfo"></div>
     </div>
 
     <div class="container">
@@ -310,9 +321,12 @@
     </div>
 
     <div id="giftModal" class="modal">
-        <div class="modal-content">
+        <div class="modal-content-image">
             <span class="close">&times;</span>
-            <div class="chapter-text" id="chapterText"></div>
+            <div class="image-container">
+                <img id="giftImage" src="всплывающее_окно.png" alt="Глава">
+                <div class="chapter-text" id="chapterText"></div>
+            </div>
             <!-- Аудио плеер -->
             <audio id="chapterAudio" class="audio-player" controls>
                 Твой браузер не поддерживает аудио
@@ -323,6 +337,9 @@
     <script>
         const config = {
             birthdayDate: '2025-12-24',
+            backgroundImage: 'фон_основной.jpg',
+            plaqueImage: 'плашка.png',
+            heartImage: 'сердечко.png',
             gifts: [
                 "Глава 1. Тайна Шёпота Фей\n\n«Куда подевался молочный зуб того крохи? — перешёптываются феи у изголовья. — Говорят, он оставил его там, где рождаются самые смелые сны...»",
                 "Глава 2. Мудрость Дремучего Леса\n\n«Старый дуб, что знает все истории на свете, приоткрыл свою потайную дверцу. Там, среди мудрых страниц, спрятан ключ к новой приключенческой саге».",
@@ -344,35 +361,36 @@
             specialAudio: 'последний_шаг.mp3'
         };
 
-        // Переменные состояния
+        // Добавляем отслеживание открытых сердечек
         let openedHearts = 0;
         const totalHearts = 7;
         let lastStepAudioPlayed = false;
         let confettiLaunched = false;
-        let userModeEnabled = false;
-        let hearts = [];
 
-        // Элементы DOM
+        // Переменные для тестового режима
+        let testMode = true;
+        let testBirthdayDate = new Date(config.birthdayDate);
+        let testCurrentDate = new Date();
+
         const countdownElement = document.getElementById('countdown');
         const heartsContainer = document.querySelector('.hearts-container');
         const modal = document.getElementById('giftModal');
         const chapterTextElement = document.getElementById('chapterText');
         const audioElement = document.getElementById('chapterAudio');
         const closeBtn = document.querySelector('.close');
-        const userModeStatus = document.getElementById('userModeStatus');
 
-        // Кнопки пользовательского режима
-        const enableUserModeBtn = document.getElementById('enableUserMode');
-        const disableUserModeBtn = document.getElementById('disableUserMode');
-        const openNextHeartBtn = document.getElementById('openNextHeart');
-        const openAllHeartsBtn = document.getElementById('openAllHearts');
-        const resetHeartsBtn = document.getElementById('resetHearts');
+        // Элементы тестового режима
+        const testBirthdayDateInput = document.getElementById('testBirthdayDate');
+        const testCurrentDateInput = document.getElementById('testCurrentDate');
+        const testApplyDateBtn = document.getElementById('testApplyDate');
+        const testResetBtn = document.getElementById('testReset');
+        const testOpenAllBtn = document.getElementById('testOpenAll');
+        const testInfoElement = document.getElementById('testInfo');
 
-        const birthday = new Date(config.birthdayDate);
-        const startDate = new Date(birthday);
-        startDate.setDate(birthday.getDate() - 7);
+        // Устанавливаем текущую дату в поле ввода
+        testCurrentDateInput.valueAsDate = testCurrentDate;
 
-        // Функция для запуска конфетти
+        // Функция для запуска блесток
         function launchConfetti() {
             if (confettiLaunched) return;
             confettiLaunched = true;
@@ -383,14 +401,14 @@
             
             (function frame() {
                 confetti({
-                    particleCount: 5,
+                    particleCount: 3,
                     angle: 60,
                     spread: 55,
                     origin: { x: 0 },
                     colors: colors
                 });
                 confetti({
-                    particleCount: 5,
+                    particleCount: 3,
                     angle: 120,
                     spread: 55,
                     origin: { x: 1 },
@@ -404,18 +422,23 @@
         }
 
         function updateCountdown() {
-            const now = new Date();
+            const now = testMode ? testCurrentDate : new Date();
+            const birthday = testMode ? testBirthdayDate : new Date(config.birthdayDate);
             const timeDiff = birthday - now;
 
             if (timeDiff <= 0) {
+                // Проверяем, все ли сердечки открыты перед показом текста
                 if (openedHearts === totalHearts) {
                     countdownElement.textContent = "Вот и перевернута последняя страница. Но разве сказка когда-нибудь кончается? Она просто становится частью тебя. Твоя сказка будет вечной. ✨";
                     countdownElement.className = "birthday-text";
+                    
+                    // ЗАПУСКАЕМ БЛЕСТКИ ПРИ ФИНАЛЬНОМ ПОСЛАНИИ
                     launchConfetti();
                 } else {
                     countdownElement.textContent = "Сделай последний шаг. Произнеси вслух заветные слова: «Открываю последнюю главу» — и финальное послание явится тебе.";
                     countdownElement.className = "countdown-text";
                     
+                    // ВОСПРОИЗВОДИМ АУДИО ДЛЯ ПОСЛЕДНЕГО ШАГА
                     if (openedHearts === totalHearts - 1 && !lastStepAudioPlayed) {
                         const lastStepAudio = new Audio(config.specialAudio);
                         lastStepAudio.play().catch(e => {
@@ -425,14 +448,13 @@
                     }
                 }
                 
-                // В обычном режиме показываем все сердечки как открытые после ДР
-                if (!userModeEnabled) {
-                    hearts.forEach(heart => {
-                        heart.element.classList.add('opened');
-                        heart.element.style.cursor = 'pointer';
-                        heart.element.style.opacity = '1';
-                    });
-                }
+                // Показываем все сердечки как открытые
+                const hearts = document.querySelectorAll('.heart');
+                hearts.forEach(heart => {
+                    heart.classList.add('opened');
+                    heart.style.cursor = 'pointer';
+                    heart.style.opacity = '1';
+                });
                 return;
             }
 
@@ -445,133 +467,89 @@
         }
 
         function createHearts() {
-            heartsContainer.innerHTML = '';
-            hearts = [];
+            const now = testMode ? testCurrentDate : new Date();
+            const birthday = testMode ? testBirthdayDate : new Date(config.birthdayDate);
+            const startDate = new Date(birthday);
+            startDate.setDate(birthday.getDate() - 7);
             
-            const now = new Date();
+            // Определяем, какой день сейчас (от 1 до 7)
             const currentDay = Math.floor((now - startDate) / (1000 * 60 * 60 * 24)) + 1;
 
-            for (let i = 1; i <= totalHearts; i++) {
+            // Очищаем контейнер перед созданием новых сердечек
+            heartsContainer.innerHTML = '';
+
+            for (let i = 1; i <= 7; i++) {
                 const heart = document.createElement('div');
                 heart.className = 'heart';
                 heart.innerHTML = `<div class="heart-number">${i}</div>`;
+                heart.style.backgroundImage = `url('${config.heartImage}')`;
 
-                // В пользовательском режиме все сердечки кликабельны
-                if (userModeEnabled) {
+                // Проверяем, можно ли открыть это сердечко
+                if (i <= currentDay && now < birthday) {
+                    heart.addEventListener('click', () => openGift(i));
+                } else if (now >= birthday) {
+                    // Если ДР уже наступило, открываем все
                     heart.addEventListener('click', () => openGift(i));
                 } else {
-                    // В обычном режиме проверяем доступность
-                    if (i <= currentDay && now < birthday) {
-                        heart.addEventListener('click', () => openGift(i));
-                    } else if (now >= birthday) {
-                        heart.addEventListener('click', () => openGift(i));
-                    } else {
-                        heart.style.cursor = 'not-allowed';
-                        heart.style.opacity = '0.5';
-                    }
+                    heart.style.cursor = 'not-allowed';
+                    heart.style.opacity = '0.5';
                 }
 
                 // Помечаем уже открытые дни
-                if ((i < currentDay && now < birthday) || now >= birthday) {
+                if (i < currentDay && now < birthday) {
+                    heart.classList.add('opened');
+                } else if (now >= birthday) {
                     heart.classList.add('opened');
                 }
 
                 heartsContainer.appendChild(heart);
-                hearts.push({
-                    element: heart,
-                    number: i,
-                    opened: false
-                });
             }
             
-            // Обновляем состояние открытых сердечек
-            updateHeartsState();
-        }
-
-        function updateHeartsState() {
-            hearts.forEach((heart, index) => {
-                if (index < openedHearts) {
-                    heart.element.classList.add('opened');
-                    heart.opened = true;
-                } else {
-                    heart.element.classList.remove('opened');
-                    heart.opened = false;
-                }
-            });
+            // Обновляем информацию в тестовом режиме
+            if (testMode) {
+                const daysUntilBirthday = Math.floor((birthday - now) / (1000 * 60 * 60 * 24));
+                testInfoElement.textContent = `До ДР: ${daysUntilBirthday} дней, текущий день: ${currentDay}`;
+            }
         }
 
         function openGift(dayNumber) {
-            // В пользовательском режиме можно открывать любые сердечки
-            if (userModeEnabled || dayNumber <= openedHearts + 1) {
-                chapterTextElement.textContent = config.gifts[dayNumber - 1];
-                audioElement.src = config.audioFiles[dayNumber - 1];
-                
-                audioElement.play().catch(e => {
-                    console.log("Автовоспроизведение заблокировано");
-                });
-                
-                modal.style.display = 'block';
+            chapterTextElement.textContent = config.gifts[dayNumber - 1];
+            audioElement.src = config.audioFiles[dayNumber - 1];
+            
+            audioElement.play().catch(e => {
+                console.log("Автовоспроизведение заблокировано");
+            });
+            
+            modal.style.display = 'block';
 
-                if (!hearts[dayNumber - 1].opened) {
-                    hearts[dayNumber - 1].opened = true;
-                    openedHearts++;
-                    updateHeartsState();
-                    
-                    checkAllHeartsOpened();
-                }
+            const hearts = document.querySelectorAll('.heart');
+            const currentHeart = hearts[dayNumber - 1];
+            
+            if (!currentHeart.classList.contains('opened')) {
+                currentHeart.classList.add('opened');
+                currentHeart.style.opacity = '1';
+                openedHearts++;
+                
+                // Проверяем, все ли сердечки открыты (для случая, если ДР уже наступило)
+                checkAllHeartsOpened();
             }
         }
 
         function checkAllHeartsOpened() {
-            const now = new Date();
+            const now = testMode ? testCurrentDate : new Date();
+            const birthday = testMode ? testBirthdayDate : new Date(config.birthdayDate);
             const timeDiff = birthday - now;
             
+            // Показываем финальный текст только если все сердечки открыты И наступил ДР
             if (openedHearts === totalHearts && timeDiff <= 0) {
                 countdownElement.textContent = "Вот и перевернута последняя страница. Но разве сказка когда-нибудь кончается? Она просто становится частью тебя. Твоя сказка будет вечной. ✨";
                 countdownElement.className = "birthday-text";
+                
+                // ЗАПУСКАЕМ БЛЕСТКИ!
                 launchConfetti();
             }
         }
 
-        // Функции пользовательского режима
-        function enableUserMode() {
-            userModeEnabled = true;
-            userModeStatus.textContent = "Режим: пользовательский";
-            countdownElement.textContent = "Пользовательский режим активирован";
-            createHearts(); // Пересоздаем сердечки с новыми настройками
-        }
-
-        function disableUserMode() {
-            userModeEnabled = false;
-            userModeStatus.textContent = "Режим: обычный";
-            openedHearts = 0;
-            createHearts(); // Пересоздаем сердечки с обычными настройками
-            updateCountdown();
-        }
-
-        function openNextHeart() {
-            if (openedHearts < totalHearts) {
-                openGift(openedHearts + 1);
-            }
-        }
-
-        function openAllHearts() {
-            for (let i = 1; i <= totalHearts; i++) {
-                if (!hearts[i-1].opened) {
-                    openGift(i);
-                }
-            }
-        }
-
-        function resetHearts() {
-            openedHearts = 0;
-            lastStepAudioPlayed = false;
-            confettiLaunched = false;
-            updateHeartsState();
-            updateCountdown();
-        }
-
-        // Обработчики событий
         closeBtn.addEventListener('click', () => {
             modal.style.display = 'none';
             audioElement.pause();
@@ -586,12 +564,40 @@
             }
         });
 
-        // Обработчики пользовательского режима
-        enableUserModeBtn.addEventListener('click', enableUserMode);
-        disableUserModeBtn.addEventListener('click', disableUserMode);
-        openNextHeartBtn.addEventListener('click', openNextHeart);
-        openAllHeartsBtn.addEventListener('click', openAllHearts);
-        resetHeartsBtn.addEventListener('click', resetHearts);
+        // Обработчики для тестового режима
+        testApplyDateBtn.addEventListener('click', () => {
+            testBirthdayDate = new Date(testBirthdayDateInput.value);
+            testCurrentDate = new Date(testCurrentDateInput.value);
+            openedHearts = 0;
+            lastStepAudioPlayed = false;
+            confettiLaunched = false;
+            updateCountdown();
+            createHearts();
+        });
+
+        testResetBtn.addEventListener('click', () => {
+            testBirthdayDate = new Date(config.birthdayDate);
+            testCurrentDate = new Date();
+            testBirthdayDateInput.value = config.birthdayDate;
+            testCurrentDateInput.valueAsDate = testCurrentDate;
+            openedHearts = 0;
+            lastStepAudioPlayed = false;
+            confettiLaunched = false;
+            updateCountdown();
+            createHearts();
+        });
+
+        testOpenAllBtn.addEventListener('click', () => {
+            const hearts = document.querySelectorAll('.heart');
+            hearts.forEach((heart, index) => {
+                if (!heart.classList.contains('opened')) {
+                    heart.classList.add('opened');
+                    heart.style.opacity = '1';
+                    openedHearts++;
+                }
+            });
+            checkAllHeartsOpened();
+        });
 
         // Инициализация
         updateCountdown();
