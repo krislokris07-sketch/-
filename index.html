@@ -4,20 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Календарь ожидания твоего Дня Рождения!</title>
+    <link href="https://fonts.googleapis.com/css2?family=Underdog&display=swap&subset=cyrillic" rel="stylesheet">
     <style>
         body {
             margin: 0;
             padding: 0;
-            min-height: 100vh;
+            height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-family: 'Arial', sans-serif;
+            font-family: 'Georgia', 'Times New Roman', serif;
             color: white;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
-            /* Фоновое изображение */
-            background: url('фон_основной.jpg') no-repeat center center fixed;
+            background: url('фон_основной.jpg') no-repeat center center;
             background-size: cover;
+            background-attachment: fixed;
         }
 
         .container {
@@ -25,23 +26,12 @@
             background-color: rgba(0, 0, 0, 0.5);
             padding: 30px;
             border-radius: 20px;
-            /* Плашка */
             background-image: url('плашка.png');
             background-size: cover;
             background-position: center;
             box-shadow: 0 0 30px rgba(0, 0, 0, 0.7);
             max-width: 800px;
-        }
-
-        h1 {
-            margin-bottom: 30px;
-            font-size: 2.5em;
-        }
-
-        #countdown {
-            font-size: 1.8em;
-            margin-bottom: 40px;
-            font-weight: bold;
+            width: 90%;
         }
 
         .hearts-container {
@@ -50,14 +40,65 @@
             flex-wrap: wrap;
             gap: 20px;
         }
+        
+        .main-title {
+            font-family: 'Underdog', cursive;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
+            font-weight: normal;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+        
+        .subtitle-block {
+            margin-bottom: 25px;
+            padding: 15px;
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
 
+        .fairy-text {
+            font-size: 1.1em;
+            margin-bottom: 8px;
+            font-style: italic;
+            line-height: 1.4;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+            opacity: 0.9;
+            margin: 0;
+            padding: 3px 0;
+        }
+
+        .countdown-text {
+            font-size: 1.6em;
+            margin-bottom: 30px;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+            color: #285e58;
+            font-family: 'Underdog';
+        }
+
+        .birthday-text {
+            font-size: 1.6em;
+            margin-bottom: 30px;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+            color: #285e58;
+            font-family: 'Underdog';
+            text-transform: none;
+            line-height: 1.4;
+            max-width: 90%;
+            margin: 0 auto;
+        }
+        
         .heart {
             width: 120px;
             height: 120px;
             cursor: pointer;
             position: relative;
             transition: transform 0.3s ease;
-            /* Сердечко */
             background: url('сердечко.png') no-repeat center center;
             background-size: contain;
         }
@@ -76,7 +117,6 @@
             color: #fff;
         }
 
-        /* Стили для модального окна */
         .modal {
             display: none;
             position: fixed;
@@ -87,48 +127,78 @@
             height: 100%;
             background-color: rgba(0, 0, 0, 0.8);
             backdrop-filter: blur(5px);
+            background-attachment: fixed;
         }
 
-        .modal-content {
-            background-color: #fefefe;
-            color: #333;
-            margin: 15% auto;
-            padding: 30px;
-            border-radius: 15px;
-            width: 80%;
-            max-width: 500px;
+        .modal-content-image {
+            background: transparent;
+            margin: 10% auto;
+            padding: 0;
+            border-radius: 0;
+            width: 90%;
+            max-width: 350px;
             text-align: center;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            box-shadow: none;
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .image-container {
             position: relative;
+            display: inline-block;
+        }
+
+        .image-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .chapter-text {
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: black;
+            text-align: center;
+            width: 80%;
+            font-size: 13px; 
+            line-height: 1.3;
+            text-shadow: none;
+            white-space: pre-line;
+            max-height: 60%;
+            overflow-y: auto;
+            padding: 35px;
+            box-sizing: border-box;
+        }
+
+        .audio-player {
+            width: 150px;
+            height: 30px;
+            margin: 10px auto;
+            opacity: 0.8;
         }
 
         .close {
-            color: #aaa;
+            color: white;
             float: right;
-            font-size: 28px;
+            font-size: 32px;
             font-weight: bold;
             position: absolute;
-            top: 10px;
-            right: 20px;
+            top: -40px;
+            right: -10px;
             cursor: pointer;
+            z-index: 101;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
         }
 
         .close:hover {
-            color: black;
+            color: #ffeb3b;
         }
 
-        .gift-title {
-            font-size: 1.5em;
-            margin-bottom: 15px;
-            color: #e91e63;
-        }
-
-        .gift-description {
-            font-size: 1.1em;
-            line-height: 1.5;
-        }
-
-        /* Стиль для открытого сердца */
         .heart.opened {
             opacity: 0.7;
             filter: brightness(0.8);
@@ -136,72 +206,308 @@
         .heart.opened .heart-number {
             text-decoration: line-through;
         }
+
+        /* Стили для тестового режима */
+        .test-mode-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            border: 2px solid #ffeb3b;
+            border-radius: 20px;
+            padding: 10px 15px;
+            cursor: pointer;
+            z-index: 1000;
+            font-family: 'Underdog', cursive;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .test-mode-toggle:hover {
+            background: rgba(255, 235, 59, 0.2);
+        }
+
+        .test-mode-toggle.active {
+            background: rgba(255, 235, 59, 0.3);
+            box-shadow: 0 0 15px rgba(255, 235, 59, 0.5);
+        }
+
+        .test-controls {
+            position: fixed;
+            top: 70px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid #ffeb3b;
+            border-radius: 10px;
+            padding: 15px;
+            z-index: 999;
+            display: none;
+            color: white;
+            font-family: 'Georgia', serif;
+            min-width: 200px;
+        }
+
+        .test-controls h3 {
+            margin-top: 0;
+            color: #ffeb3b;
+            font-family: 'Underdog', cursive;
+        }
+
+        .test-btn {
+            background: #285e58;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 8px 12px;
+            margin: 5px;
+            cursor: pointer;
+            font-family: 'Georgia', serif;
+            transition: background 0.3s ease;
+        }
+
+        .test-btn:hover {
+            background: #3a7a73;
+        }
+
+        @media (max-width: 400px) {
+            .container {
+                width: 95%;
+                padding: 20px;
+            }
+            
+            .heart {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .modal-content-image {
+                margin: 5% auto;
+                max-width: 320px;
+            }
+            
+            .chapter-text {
+                font-size: 12px;
+                width: 85%;
+                padding: 25px;
+            }
+            
+            .audio-player {
+                max-width: 280px;
+            }
+
+            .test-mode-toggle {
+                top: 10px;
+                right: 10px;
+                font-size: 12px;
+                padding: 8px 12px;
+            }
+
+            .test-controls {
+                top: 50px;
+                right: 10px;
+                min-width: 180px;
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>До твоего Дня Рождения осталось...</h1>
-        <div id="countdown">Загрузка...</div>
+    <!-- Кнопка переключения тестового режима -->
+    <div class="test-mode-toggle" id="testModeToggle">Тестовый режим</div>
+    
+    <!-- Панель управления тестовым режимом -->
+    <div class="test-controls" id="testControls">
+        <h3>Тестовый режим</h3>
+        <button class="test-btn" onclick="openAllHearts()">Открыть все сердечки</button>
+        <button class="test-btn" onclick="closeAllHearts()">Закрыть все сердечки</button>
+        <button class="test-btn" onclick="showFinalMessage()">Показать финальное послание</button>
+        <button class="test-btn" onclick="simulateBirthday()">Симулировать наступление ДР</button>
+        <button class="test-btn" onclick="simulateDay(1)">Симулировать 1 день до ДР</button>
+        <button class="test-btn" onclick="simulateDay(3)">Симулировать 3 дня до ДР</button>
+        <button class="test-btn" onclick="resetToNormal()">Вернуть обычный режим</button>
+    </div>
 
+    <div class="container">
+        <h1 class="main-title">Заколдованный отсчет</h1>
+        
+        <div class="subtitle-block">
+            <p class="fairy-text">Не спеши, добрый молодец, не торопи, красна девица...</p>
+            <p class="fairy-text">Сказка начнётся, как только ночь соткёт из лунного света свою серебряную нить, а это случится...</p>
+        </div>
+        
+        <div id="countdown" class="countdown-text">совсем скоро</div>
+        
         <div class="hearts-container">
             <!-- 7 сердечек будут сгенерированы скриптом -->
         </div>
     </div>
 
-    <!-- Модальное окно для показа подарка -->
     <div id="giftModal" class="modal">
-        <div class="modal-content">
+        <div class="modal-content-image">
             <span class="close">&times;</span>
-            <h2 class="gift-title">Подарок дня <span id="giftDay"></span></h2>
-            <p class="gift-description" id="giftText"></p>
+            <div class="image-container">
+                <img id="giftImage" src="всплывающее_окно.png" alt="Глава">
+                <div class="chapter-text" id="chapterText"></div>
+            </div>
+            <!-- Аудио плеер -->
+            <audio id="chapterAudio" class="audio-player" controls>
+                Твой браузер не поддерживает аудио
+            </audio>
         </div>
     </div>
 
     <script>
-        // КОНФИГУРАЦИЯ
         const config = {
-            // ДАТА ДНЯ РОЖДЕНИЯ - 24.12.2025
             birthdayDate: '2025-12-24',
-            // ПУТИ К ИЗОБРАЖЕНИЯМ - используйте только названия файлов!
             backgroundImage: 'фон_основной.jpg',
             plaqueImage: 'плашка.png',
             heartImage: 'сердечко.png',
-            // Описания подарков для каждого из 7 дней
             gifts: [
-                "Ищи свой подарок под подушкой! <3 Там ты найдешь что-то, что согреет твои сны.",
-                "Загляни в самый верхний шкаф на кухне. Там ждет тебя маленькая сладкая радость!",
-                "Проверь карман своей зимней куртки. Возможно, там завалялось что-то интересное!",
-                "Сегодняшний сюрприз ждет тебя в тумбочке рядом с кроватью. Он поможет настроиться на праздник!",
-                "Посмотри в ящике с носками. Да-да, именно там! Это будет нечто... стильное.",
-                "Твой подарок сегодня там, где ты хранишь чай или кофе. Идеально для вечернего отдыха!",
-                "САМЫЙ ГЛАВНЫЙ ПОДАРОК! Загляни под диван в гостиной. С Днем Рождения, моя любовь!"
+                "Глава 1. Тайна Шёпота Фей\n\n«Куда подевался молочный зуб того крохи? — перешёптываются феи у изголовья. — Говорят, он оставил его там, где рождаются самые смелые сны...»",
+                "Глава 2. Мудрость Дремучего Леса\n\n«Старый дуб, что знает все истории на свете, приоткрыл свою потайную дверцу. Там, среди мудрых страниц, спрятан ключ к новой приключенческой саге».",
+                "Глава 3. Напевы Волшебного Свиреля\n\n«Чтобы услышать магическую мелодию, что заставляет пуститься в пляс даже лесных великанов, нужно лишь попросить волшебную колонну сыграть её погромче».",
+                "Глава 4. Эликсир Силы в Росуарском Лесу\n\n«Водяной эльф оставил для тебя пузырёк с утренней росой, собранной с паутинок. Она дарит богатырскую силу и бодрость, но найти её можно лишь в гроте, где плещется радужная вода».",
+                "Глава 5. Послание из Чащи\n\n«Говорят, в самой сердцевине леса живёт эльфийка-отшельница. Она не показывается никому, но для тех, кто верит, оставляет свои дары на опушке, отмеченные серебряным светом».",
+                "Глава 6. Снаряжение для Путешественника\n\n«Карты сокровищ и плащи-невидимки — всё это ждёт в потайном сундуке отважного искателя приключений. Открой секретный ящик, где хранится экипировка для великих подвигов».",
+                "Глава 7. Приглашение в Королевскую Трапезную\n\n«Сегодня все дороги ведут в потайной зал, где пируют благородные рыцари и мудрые волшебники. Там, в центре пиршества, тебя ждёт трофей, достойный настоящего героя»."
+            ],
+            audioFiles: [
+                'audio_1.mp3',
+                'audio_2.mp3',
+                'audio_3.mp3',
+                'audio_4.mp3',
+                'audio_5.mp3',
+                'audio_6.mp3',
+                'audio_7.mp3'
             ]
         };
 
-        // Элементы DOM
+        // Добавляем отслеживание открытых сердечек
+        let openedHearts = 0;
+        const totalHearts = 7;
+        let isTestMode = false;
+        let originalBirthdayDate = '2025-12-24';
+
         const countdownElement = document.getElementById('countdown');
         const heartsContainer = document.querySelector('.hearts-container');
         const modal = document.getElementById('giftModal');
-        const giftDayElement = document.getElementById('giftDay');
-        const giftTextElement = document.getElementById('giftText');
+        const chapterTextElement = document.getElementById('chapterText');
+        const audioElement = document.getElementById('chapterAudio');
         const closeBtn = document.querySelector('.close');
+        const testModeToggle = document.getElementById('testModeToggle');
+        const testControls = document.getElementById('testControls');
 
-        // Рассчитываем дату начала обратного отсчета (за 7 дней до ДР)
         const birthday = new Date(config.birthdayDate);
         const startDate = new Date(birthday);
         startDate.setDate(birthday.getDate() - 7);
 
-        // Устанавливаем фоновые изображения
         document.body.style.backgroundImage = `url('${config.backgroundImage}')`;
         document.querySelector('.container').style.backgroundImage = `url('${config.plaqueImage}')`;
 
-        // Функция для обновления обратного отсчета
+        // Функции для тестового режима
+        function toggleTestMode() {
+            isTestMode = !isTestMode;
+            if (isTestMode) {
+                testModeToggle.classList.add('active');
+                testModeToggle.textContent = 'Тестовый режим ✓';
+                testControls.style.display = 'block';
+            } else {
+                testModeToggle.classList.remove('active');
+                testModeToggle.textContent = 'Тестовый режим';
+                testControls.style.display = 'none';
+                resetToNormal();
+            }
+        }
+
+        function openAllHearts() {
+            const hearts = document.querySelectorAll('.heart');
+            hearts.forEach((heart, index) => {
+                if (!heart.classList.contains('opened')) {
+                    heart.classList.add('opened');
+                    heart.style.cursor = 'pointer';
+                    heart.style.opacity = '1';
+                    openedHearts++;
+                }
+            });
+            checkAllHeartsOpened();
+        }
+
+        function closeAllHearts() {
+            const hearts = document.querySelectorAll('.heart');
+            hearts.forEach(heart => {
+                heart.classList.remove('opened');
+            });
+            openedHearts = 0;
+            recreateHearts(); // Пересоздаем сердечки с учетом текущей даты
+            updateCountdown();
+        }
+
+        function showFinalMessage() {
+            countdownElement.textContent = "Вот и перевернута последняя страница. Но разве сказка когда-нибудь кончается? Она просто становится частью тебя. Твоя сказка будет вечной. ✨";
+            countdownElement.className = "birthday-text";
+            openAllHearts();
+        }
+
+        function simulateBirthday() {
+            // Временно изменяем дату рождения на текущую для тестирования
+            const now = new Date();
+            birthday.setFullYear(now.getFullYear(), now.getMonth(), now.getDate());
+            recreateHearts();
+            updateCountdown();
+        }
+
+        function simulateDay(daysBefore) {
+            // Симулируем определенное количество дней до ДР
+            const now = new Date();
+            const testDate = new Date(birthday);
+            testDate.setDate(birthday.getDate() - daysBefore);
+            
+            // Временно подменяем текущую дату
+            const originalNow = new Date();
+            Date.prototype.getTime = function() { return testDate.getTime(); };
+            Date.prototype.valueOf = function() { return testDate.getTime(); };
+            
+            recreateHearts();
+            updateCountdown();
+            
+            // Восстанавливаем оригинальную дату через некоторое время
+            setTimeout(() => {
+                Date.prototype.getTime = function() { return originalNow.getTime(); };
+                Date.prototype.valueOf = function() { return originalNow.getTime(); };
+            }, 1000);
+        }
+
+        function resetToNormal() {
+            // Восстанавливаем оригинальную дату
+            birthday.setFullYear(2025, 11, 24); // 24 декабря 2025
+            closeAllHearts();
+            recreateHearts();
+            updateCountdown();
+        }
+
+        function recreateHearts() {
+            // Очищаем контейнер и создаем сердечки заново
+            heartsContainer.innerHTML = '';
+            openedHearts = 0;
+            createHearts();
+        }
+
+        testModeToggle.addEventListener('click', toggleTestMode);
+
         function updateCountdown() {
             const now = new Date();
             const timeDiff = birthday - now;
 
             if (timeDiff <= 0) {
-                countdownElement.textContent = "С ДНЕМ РОЖДЕНИЯ! 🎉";
+                // Проверяем, все ли сердечки открыты перед показом текста
+                if (openedHearts === totalHearts) {
+                    countdownElement.textContent = "Вот и перевернута последняя страница. Но разве сказка когда-нибудь кончается? Она просто становится частью тебя. Твоя сказка будет вечной. ✨";
+                    countdownElement.className = "birthday-text";
+                } else {
+                    countdownElement.textContent = "Сделай последний шаг. Произнеси вслух заветные слова: «Открываю последнюю главу» — и финальное послание явится тебе.";
+                    countdownElement.className = "countdown-text";
+                }
+                
                 // Показываем все сердечки как открытые
                 const hearts = document.querySelectorAll('.heart');
                 hearts.forEach(heart => {
@@ -212,6 +518,7 @@
                 return;
             }
 
+            countdownElement.className = "countdown-text";
             const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
             const hours = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
@@ -219,7 +526,6 @@
             countdownElement.textContent = `${days} дней, ${hours} часов и ${minutes} минут`;
         }
 
-        // Создаем сердечки
         function createHearts() {
             const now = new Date();
             // Определяем, какой день сейчас (от 1 до 7)
@@ -229,8 +535,6 @@
                 const heart = document.createElement('div');
                 heart.className = 'heart';
                 heart.innerHTML = `<div class="heart-number">${i}</div>`;
-
-                // Устанавливаем фоновое изображение для сердца
                 heart.style.backgroundImage = `url('${config.heartImage}')`;
 
                 // Проверяем, можно ли открыть это сердечко
@@ -247,41 +551,67 @@
                 // Помечаем уже открытые дни
                 if (i < currentDay && now < birthday) {
                     heart.classList.add('opened');
+                    openedHearts++;
                 } else if (now >= birthday) {
                     heart.classList.add('opened');
+                    openedHearts++;
                 }
 
                 heartsContainer.appendChild(heart);
             }
         }
 
-        // Функция открытия подарка
         function openGift(dayNumber) {
-            giftDayElement.textContent = dayNumber;
-            giftTextElement.textContent = config.gifts[dayNumber - 1];
+            chapterTextElement.textContent = config.gifts[dayNumber - 1];
+            audioElement.src = config.audioFiles[dayNumber - 1];
+            
+            audioElement.play().catch(e => {
+                console.log("Автовоспроизведение заблокировано");
+            });
+            
             modal.style.display = 'block';
 
-            // Помечаем сердечко как открытое
             const hearts = document.querySelectorAll('.heart');
-            hearts[dayNumber - 1].classList.add('opened');
-            hearts[dayNumber - 1].style.opacity = '1';
+            const currentHeart = hearts[dayNumber - 1];
+            
+            if (!currentHeart.classList.contains('opened')) {
+                currentHeart.classList.add('opened');
+                currentHeart.style.opacity = '1';
+                openedHearts++;
+                
+                // Проверяем, все ли сердечки открыты (для случая, если ДР уже наступило)
+                checkAllHeartsOpened();
+            }
         }
 
-        // Закрытие модального окна
+        function checkAllHeartsOpened() {
+            const now = new Date();
+            const timeDiff = birthday - now;
+            
+            // Показываем финальный текст только если все сердечки открыты И наступил ДР
+            if (openedHearts === totalHearts && timeDiff <= 0) {
+                countdownElement.textContent = "Вот и перевернута последняя страница. Но разве сказка когда-нибудь кончается? Она просто становится частью тебя. Твоя сказка будет вечной. ✨";
+                countdownElement.className = "birthday-text";
+            }
+        }
+
         closeBtn.addEventListener('click', () => {
             modal.style.display = 'none';
+            audioElement.pause();
+            audioElement.currentTime = 0;
         });
 
         window.addEventListener('click', (event) => {
             if (event.target == modal) {
                 modal.style.display = 'none';
+                audioElement.pause();
+                audioElement.currentTime = 0;
             }
         });
 
-        // Инициализация
         updateCountdown();
         createHearts();
-        setInterval(updateCountdown, 60000); // Обновляем отсчет каждую минуту
+        setInterval(updateCountdown, 60000);
     </script>
 </body>
 </html>
