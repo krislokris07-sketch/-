@@ -426,15 +426,26 @@
             const birthday = testMode ? testBirthdayDate : new Date(config.birthdayDate);
             const timeDiff = birthday - now;
 
+            // Сбрасываем счетчик открытых сердечек при обновлении
+            openedHearts = 0;
+            const hearts = document.querySelectorAll('.heart');
+            hearts.forEach(heart => {
+                if (heart.classList.contains('opened')) {
+                    openedHearts++;
+                }
+            });
+
             if (timeDiff <= 0) {
-                // Проверяем, все ли сердечки открыты перед показом текста
+                // Если ДР наступило
                 if (openedHearts === totalHearts) {
+                    // Все сердечки открыты - показываем финальное сообщение
                     countdownElement.textContent = "Вот и перевернута последняя страница. Но разве сказка когда-нибудь кончается? Она просто становится частью тебя. Твоя сказка будет вечной. ✨";
                     countdownElement.className = "birthday-text";
                     
                     // ЗАПУСКАЕМ БЛЕСТКИ ПРИ ФИНАЛЬНОМ ПОСЛАНИИ
                     launchConfetti();
                 } else {
+                    // ДР наступило, но не все сердечки открыты
                     countdownElement.textContent = "Сделай последний шаг. Произнеси вслух заветные слова: «Открываю последнюю главу» — и финальное послание явится тебе.";
                     countdownElement.className = "countdown-text";
                     
@@ -447,17 +458,10 @@
                         lastStepAudioPlayed = true;
                     }
                 }
-                
-                // Показываем все сердечки как открытые
-                const hearts = document.querySelectorAll('.heart');
-                hearts.forEach(heart => {
-                    heart.classList.add('opened');
-                    heart.style.cursor = 'pointer';
-                    heart.style.opacity = '1';
-                });
                 return;
             }
 
+            // Если ДР еще не наступило
             countdownElement.className = "countdown-text";
             const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
             const hours = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -472,8 +476,12 @@
             const startDate = new Date(birthday);
             startDate.setDate(birthday.getDate() - 7);
             
+            // Определяем, сколько дней прошло с начала отсчета
+            const daysPassed = Math.floor((now - startDate) / (1000 * 60 * 60 * 24));
+            
             // Определяем, какой день сейчас (от 1 до 7)
-            const currentDay = Math.floor((now - startDate) / (1000 * 60 * 60 * 24)) + 1;
+            // День 1 = за 7 дней до ДР, день 7 = в день ДР
+            const currentDay = Math.min(Math.max(daysPassed + 1, 1), 7);
 
             // Очищаем контейнер перед созданием новых сердечек
             heartsContainer.innerHTML = '';
@@ -485,20 +493,19 @@
                 heart.style.backgroundImage = `url('${config.heartImage}')`;
 
                 // Проверяем, можно ли открыть это сердечко
-                if (i <= currentDay && now < birthday) {
+                if (i <= currentDay) {
+                    // Сердечко доступно для открытия
                     heart.addEventListener('click', () => openGift(i));
-                } else if (now >= birthday) {
-                    // Если ДР уже наступило, открываем все
-                    heart.addEventListener('click', () => openGift(i));
+                    heart.style.cursor = 'pointer';
+                    heart.style.opacity = '1';
                 } else {
+                    // Сердечко еще недоступно
                     heart.style.cursor = 'not-allowed';
                     heart.style.opacity = '0.5';
                 }
 
-                // Помечаем уже открытые дни
-                if (i < currentDay && now < birthday) {
-                    heart.classList.add('opened');
-                } else if (now >= birthday) {
+                // Помечаем уже открытые дни (дни, которые уже прошли)
+                if (i < currentDay) {
                     heart.classList.add('opened');
                 }
 
@@ -527,10 +534,9 @@
             
             if (!currentHeart.classList.contains('opened')) {
                 currentHeart.classList.add('opened');
-                currentHeart.style.opacity = '1';
                 openedHearts++;
                 
-                // Проверяем, все ли сердечки открыты (для случая, если ДР уже наступило)
+                // Проверяем, все ли сердечки открыты
                 checkAllHeartsOpened();
             }
         }
