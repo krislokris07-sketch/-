@@ -7,6 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Underdog&display=swap&subset=cyrillic" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
     <style>
+        /* Стили остаются без изменений, они хорошо написаны */
         body {
             margin: 0;
             padding: 0;
@@ -260,7 +261,7 @@
         <div class="modal-content-image">
             <span class="close">&times;</span>
             <div class="image-container">
-                <img id="giftImage" src="всплывающее_окно.png" alt="Глава">
+                <img id="giftImage" src="всплывающее_окно.png" alt="Глава" onerror="this.style.display='none'">
                 <div class="chapter-text" id="chapterText"></div>
             </div>
             <!-- Аудио плеер -->
@@ -310,6 +311,29 @@
         const audioElement = document.getElementById('chapterAudio');
         const closeBtn = document.querySelector('.close');
 
+        // Функция для сохранения состояния в localStorage
+        function saveOpenedHearts() {
+            const hearts = document.querySelectorAll('.heart');
+            const opened = [];
+            hearts.forEach((heart, index) => {
+                if (heart.classList.contains('opened')) {
+                    opened.push(index);
+                }
+            });
+            localStorage.setItem('openedHearts', JSON.stringify(opened));
+        }
+
+        // Функция для загрузки состояния из localStorage
+        function loadOpenedHearts() {
+            const saved = localStorage.getItem('openedHearts');
+            if (saved) {
+                const openedIndices = JSON.parse(saved);
+                openedHearts = openedIndices.length;
+                return openedIndices;
+            }
+            return [];
+        }
+
         // Функция для запуска блесток
         function launchConfetti() {
             if (confettiLaunched) return;
@@ -345,15 +369,6 @@
             const now = new Date();
             const birthday = new Date(config.birthdayDate);
             const timeDiff = birthday - now;
-
-            // Сбрасываем счетчик открытых сердечек при обновлении
-            openedHearts = 0;
-            const hearts = document.querySelectorAll('.heart');
-            hearts.forEach(heart => {
-                if (heart.classList.contains('opened')) {
-                    openedHearts++;
-                }
-            });
 
             if (timeDiff <= 0) {
                 // Если ДР наступило
@@ -405,6 +420,9 @@
             // День 1 = 18 декабря, день 7 = 24 декабря
             const currentDay = Math.min(Math.max(daysPassed + 1, 1), 7);
 
+            // Загружаем сохраненные открытые сердечки
+            const savedOpenedHearts = loadOpenedHearts();
+
             // Очищаем контейнер перед созданием новых сердечек
             heartsContainer.innerHTML = '';
 
@@ -415,20 +433,23 @@
                 heart.style.backgroundImage = `url('${config.heartImage}')`;
 
                 // Проверяем, можно ли открыть это сердечко
-                if (i <= currentDay) {
+                const isAvailable = i <= currentDay;
+                const wasOpened = savedOpenedHearts.includes(i - 1);
+
+                if (isAvailable) {
                     // Сердечко доступно для открытия
                     heart.addEventListener('click', () => openGift(i));
                     heart.style.cursor = 'pointer';
                     heart.style.opacity = '1';
+                    
+                    // Помечаем как открытое, если оно было открыто ранее
+                    if (wasOpened) {
+                        heart.classList.add('opened');
+                    }
                 } else {
                     // Сердечко еще недоступно
                     heart.style.cursor = 'not-allowed';
                     heart.style.opacity = '0.5';
-                }
-
-                // Помечаем уже открытые дни (дни, которые уже прошли)
-                if (i < currentDay) {
-                    heart.classList.add('opened');
                 }
 
                 heartsContainer.appendChild(heart);
@@ -451,6 +472,7 @@
             if (!currentHeart.classList.contains('opened')) {
                 currentHeart.classList.add('opened');
                 openedHearts++;
+                saveOpenedHearts();
                 
                 // Проверяем, все ли сердечки открыты
                 checkAllHeartsOpened();
