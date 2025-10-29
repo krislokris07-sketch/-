@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
      <link rel="icon" type="image/png" href="иконка.png">
-    <title>Для пылающих сердцем</title>
+    <title>Для храбрых сердцем!</title>
     <link href="https://fonts.googleapis.com/css2?family=Underdog&display=swap&subset=cyrillic" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
     <style>
@@ -48,7 +48,7 @@
         }
         
         .main-title {
-            margin-top: 90px;
+            margin-top: 70px;
             font-family: 'Underdog', cursive;
             font-size: 1.8em;
             letter-spacing: 2px;
@@ -223,10 +223,9 @@
                 padding: 15px;
                 transform: scale(0.9);
             }
-            
             .hearts-container {
-    gap: 15px;
-}
+        gap: 15px;
+    }
             
             .heart {
                 width: 100px;
@@ -289,7 +288,10 @@
             gifts: [
                 "Глава 1. Тайна Шёпота Фей\n\n«Куда подевался молочный зуб того крохи? — перешёптываются феи у изголовья. — Говорят, он оставил его там, где рождаются самые смелые сны...»",
                 "Глава 2. Мудрость Дремучего Леса\n\n«Старый дуб, что знает все истории на свете, приоткрыл свою потайную дверцу. Там, среди мудрых страниц, спрятан ключ к новой приключенческой саге».",
-                "Глава 3. Напевы Волшебного Свиреля\n\n«Чтобы услышать магическую мелодию, что заставляет пуститься в пляс даже лесных великанов, нужно лишь попросить волшебную колонну сыграть её погромче».",
+                
+                // 👇 ДЕНЬ 3 - С НАМЁКОМ НА СЕКРЕТНУЮ КНОПКУ
+                "Глава 3. Напевы Волшебного Свиреля\n\n«Чтобы услышать магическую мелодию, что заставляет пуститься в пляс даже лесных великанов, нужно лишь попросить волшебную колонну сыграть её погромче...\n\n*Прислушайся к шепоту колонны после того, как закроешь это сообщение...*»",
+                
                 "Глава 4. Эликсир Силы в Росуарском Лесу\n\n«Водяной эльф оставил для тебя пузырёк с утренней росой, собранной с паутинок. Она дарит богатырскую силу и бодрость, но найти её можно лишь в гроте, где плещется радужная вода».",
                 "Глава 5. Послание из Чащи\n\n«Говорят, в самой сердцевине леса живёт эльфийка-отшельница. Она не показывается никому, но для тех, кто верит, оставляет свои дары на опушке, отмеченные серебряным светом».",
                 "Глава 6. Снаряжение для Путешественника\n\n«Карты сокровищ и плащи-невидимки — всё это ждёт в потайном сундуке отважного искателя приключений. Открой секретный ящик, где хранится экипировка для великих подвигов».",
@@ -312,6 +314,7 @@
         const totalHearts = 7;
         let lastStepAudioPlayed = false;
         let confettiLaunched = false;
+        let day3Opened = false;
 
         const countdownElement = document.getElementById('countdown');
         const heartsContainer = document.querySelector('.hearts-container');
@@ -319,6 +322,54 @@
         const chapterTextElement = document.getElementById('chapterText');
         const audioElement = document.getElementById('chapterAudio');
         const closeBtn = document.querySelector('.close');
+
+        // 👇 ФУНКЦИЯ ДЛЯ ПОКАЗА СЕКРЕТНОЙ КНОПКИ
+        function showSecretButton() {
+            // Создаем секретную кнопку
+            const secretButton = document.createElement('button');
+            secretButton.textContent = '🎵 Прикоснуться к магии';
+            secretButton.style.cssText = `
+                position: fixed;
+                bottom: 80px;
+                right: 20px;
+                background: rgba(139, 69, 19, 0.9);
+                color: #FFEBB7;
+                border: 2px solid #D2691E;
+                border-radius: 20px;
+                padding: 10px 15px;
+                font-family: cursive;
+                font-size: 0.9em;
+                cursor: pointer;
+                z-index: 1000;
+                opacity: 0;
+                transition: all 0.5s ease;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            `;
+            
+            // Эффект при наведении
+            secretButton.addEventListener('mouseover', function() {
+                this.style.transform = 'scale(1.05)';
+                this.style.background = 'rgba(160, 82, 45, 0.9)';
+            });
+            
+            secretButton.addEventListener('mouseout', function() {
+                this.style.transform = 'scale(1)';
+                this.style.background = 'rgba(139, 69, 19, 0.9)';
+            });
+            
+            // Добавляем кнопку на страницу
+            document.body.appendChild(secretButton);
+            
+            // Плавно появляемся
+            setTimeout(() => {
+                secretButton.style.opacity = '1';
+            }, 1000);
+            
+            // 👇 ПЕРЕАДРЕСАЦИЯ НА ТВОЙ САЙТ С ПАЛОЧКОЙ
+            secretButton.addEventListener('click', function() {
+                window.open('https://krislokris07-sketch.github.io/wandyou/', '_blank');
+            });
+        }
 
         // Функция для сохранения состояния в localStorage
         function saveOpenedHearts() {
@@ -338,6 +389,13 @@
             if (saved) {
                 const openedIndices = JSON.parse(saved);
                 openedHearts = openedIndices.length;
+                
+                // Если 3-й день был открыт, показываем секретную кнопку
+                if (openedIndices.includes(2)) { // индекс 2 = день 3
+                    day3Opened = true;
+                    setTimeout(showSecretButton, 1000);
+                }
+                
                 return openedIndices;
             }
             return [];
@@ -483,7 +541,12 @@
                 openedHearts++;
                 saveOpenedHearts();
                 
-                // Проверяем, все ли сердечки открыты
+                // 👇 СПЕЦИАЛЬНАЯ ЛОГИКА ДЛЯ 3-ГО ДНЯ
+                if (dayNumber === 3 && !day3Opened) {
+                    day3Opened = true;
+                    showSecretButton();
+                }
+                
                 checkAllHeartsOpened();
             }
         }
