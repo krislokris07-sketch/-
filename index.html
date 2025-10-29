@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
      <link rel="icon" type="image/png" href="иконка.png">
-    <title>Для храбрых сердцем!</title>
+    <title>Для храбрых сердцем! - ТЕСТОВЫЙ РЕЖИМ</title>
     <link href="https://fonts.googleapis.com/css2?family=Underdog&display=swap&subset=cyrillic" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
     <style>
@@ -216,6 +216,37 @@
             text-decoration: line-through;
         }
 
+        /* Стили для тестовой кнопки */
+        .test-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 215, 0, 0.9);
+            color: #8B4513;
+            border: 2px solid #8B4513;
+            border-radius: 10px;
+            padding: 10px 15px;
+            font-family: cursive;
+            font-size: 0.9em;
+            cursor: pointer;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .test-notification {
+            position: fixed;
+            top: 70px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            color: #FFD700;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: cursive;
+            font-size: 0.8em;
+            z-index: 1000;
+            max-width: 200px;
+        }
+
         @media (max-width: 400px) {
             .container {
                 margin-top: 20px;
@@ -246,19 +277,35 @@
             .audio-player {
                 max-width: 280px;
             }
+
+            .test-button {
+                top: 10px;
+                left: 10px;
+                font-size: 0.8em;
+                padding: 8px 12px;
+            }
+
+            .test-notification {
+                top: 50px;
+                left: 10px;
+                max-width: 150px;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- ТЕСТОВАЯ КНОПКА -->
+    <button class="test-button" onclick="enableTestMode()">🔧 Тест 3-го дня</button>
+
     <div class="container">
-        <h1 class="main-title">Заколдованный<br>отсчет</h1>
+        <h1 class="main-title">Заколдованный<br>отсчет - ТЕСТ</h1>
         
         <div class="subtitle-block">
             <p class="fairy-text">Не спеши, добрый молодец, не торопи, красна девица...</p>
             <p class="fairy-text">Сказка начнётся, как только ночь соткёт из лунного света свою серебряную нить, а это случится...</p>
         </div>
         
-        <div id="countdown" class="countdown-text">совсем скоро</div>
+        <div id="countdown" class="countdown-text">ТЕСТОВЫЙ РЕЖИМ - все дни доступны</div>
         
         <div class="hearts-container">
             <!-- 7 сердечек будут сгенерированы скриптом -->
@@ -280,6 +327,28 @@
     </div>
 
     <script>
+        // 👇 ТЕСТОВЫЙ РЕЖИМ - ВСЕ ДНИ ДОСТУПНЫ СЕЙЧАС ЖЕ
+        let TEST_MODE = false;
+
+        function enableTestMode() {
+            TEST_MODE = true;
+            const notification = document.createElement('div');
+            notification.className = 'test-notification';
+            notification.textContent = '✅ Тестовый режим включен! Все дни доступны.';
+            document.body.appendChild(notification);
+            
+            // Пересоздаем сердечки с тестовым режимом
+            createHearts();
+            
+            // Обновляем текст отсчета
+            countdownElement.textContent = 'ТЕСТОВЫЙ РЕЖИМ - все дни доступны';
+            
+            // Убираем уведомление через 3 секунды
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
         const config = {
             birthdayDate: '2025-12-24',
             backgroundImage: 'фон_основной.jpg',
@@ -401,91 +470,9 @@
             return [];
         }
 
-        // Функция для запуска блесток
-        function launchConfetti() {
-            if (confettiLaunched) return;
-            confettiLaunched = true;
-            
-            const duration = 5000;
-            const end = Date.now() + duration;
-            const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff', '#ffffff'];
-            
-            (function frame() {
-                confetti({
-                    particleCount: 3,
-                    angle: 60,
-                    spread: 55,
-                    origin: { x: 0 },
-                    colors: colors
-                });
-                confetti({
-                    particleCount: 3,
-                    angle: 120,
-                    spread: 55,
-                    origin: { x: 1 },
-                    colors: colors
-                });
-                
-                if (Date.now() < end) {
-                    requestAnimationFrame(frame);
-                }
-            }());
-        }
-
-        function updateCountdown() {
-            const now = new Date();
-            const birthday = new Date(config.birthdayDate);
-            const timeDiff = birthday - now;
-
-            if (timeDiff <= 0) {
-                // Если ДР наступило
-                if (openedHearts === totalHearts) {
-                    // Все сердечки открыты - показываем финальное сообщение
-                    countdownElement.textContent = "Вот и перевернута последняя страница. Но разве сказка когда-нибудь кончается? Она просто становится частью тебя. Твоя сказка будет вечной. ✨";
-                    countdownElement.className = "birthday-text";
-                    
-                    // ЗАПУСКАЕМ БЛЕСТКИ ПРИ ФИНАЛЬНОМ ПОСЛАНИИ
-                    launchConfetti();
-                } else {
-                    // ДР наступило, но не все сердечки открыты
-                    countdownElement.textContent = "Сделай последний шаг. Произнеси вслух заветные слова: «Открываю последнюю главу» — и финальное послание явится тебе.";
-                    countdownElement.className = "countdown-text";
-                    
-                    // ВОСПРОИЗВОДИМ АУДИО ДЛЯ ПОСЛЕДНЕГО ШАГА
-                    if (openedHearts === totalHearts - 1 && !lastStepAudioPlayed) {
-                        const lastStepAudio = new Audio(config.specialAudio);
-                        lastStepAudio.play().catch(e => {
-                            console.log("Аудио последнего шага не воспроизвелось:", e);
-                        });
-                        lastStepAudioPlayed = true;
-                    }
-                }
-                return;
-            }
-
-            // Если ДР еще не наступило
-            countdownElement.className = "countdown-text";
-            const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
-
-            countdownElement.textContent = `${days} дней, ${hours} часов и ${minutes} минут`;
-        }
-
         function createHearts() {
-            const now = new Date();
-            const birthday = new Date(config.birthdayDate);
-            
-            // Начинаем отсчет за 6 дней до ДР (18 декабря для ДР 24 декабря)
-            const startDate = new Date(birthday);
-            startDate.setDate(birthday.getDate() - 6);
-            
-            // Определяем, сколько дней прошло с начала отсчета
-            const daysPassed = Math.floor((now - startDate) / (1000 * 60 * 60 * 24));
-            
-            // Определяем, какой день сейчас (от 1 до 7)
-            // День 1 = 18 декабря, день 7 = 24 декабря
-            const currentDay = Math.min(Math.max(daysPassed + 1, 1), 7);
+            // В тестовом режиме все дни доступны
+            const currentDay = TEST_MODE ? 7 : 1; // В тестовом режиме все 7 дней доступны
 
             // Загружаем сохраненные открытые сердечки
             const savedOpenedHearts = loadOpenedHearts();
@@ -499,8 +486,8 @@
                 heart.innerHTML = `<div class="heart-number">${i}</div>`;
                 heart.style.backgroundImage = `url('${config.heartImage}')`;
 
-                // Проверяем, можно ли открыть это сердечко
-                const isAvailable = i <= currentDay;
+                // В тестовом режиме все сердечки доступны
+                const isAvailable = TEST_MODE ? true : (i <= currentDay);
                 const wasOpened = savedOpenedHearts.includes(i - 1);
 
                 if (isAvailable) {
@@ -546,23 +533,6 @@
                     day3Opened = true;
                     showSecretButton();
                 }
-                
-                checkAllHeartsOpened();
-            }
-        }
-
-        function checkAllHeartsOpened() {
-            const now = new Date();
-            const birthday = new Date(config.birthdayDate);
-            const timeDiff = birthday - now;
-            
-            // Показываем финальный текст только если все сердечки открыты И наступил ДР
-            if (openedHearts === totalHearts && timeDiff <= 0) {
-                countdownElement.textContent = "Вот и перевернута последняя страница. Но разве сказка когда-нибудь кончается? Она просто становится частью тебя. Твоя сказка будет вечной. ✨";
-                countdownElement.className = "birthday-text";
-                
-                // ЗАПУСКАЕМ БЛЕСТКИ!
-                launchConfetti();
             }
         }
 
@@ -581,9 +551,29 @@
         });
 
         // Инициализация
-        updateCountdown();
         createHearts();
-        setInterval(updateCountdown, 60000);
+        
+        // В тестовом режиме не обновляем отсчет
+        if (!TEST_MODE) {
+            updateCountdown();
+            setInterval(updateCountdown, 60000);
+        }
+
+        function updateCountdown() {
+            // Обычная логика отсчета (не используется в тестовом режиме)
+            const now = new Date();
+            const birthday = new Date(config.birthdayDate);
+            const timeDiff = birthday - now;
+
+            if (timeDiff <= 0) {
+                countdownElement.textContent = "День рождения наступил!";
+            } else {
+                const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+                countdownElement.textContent = `${days} дней, ${hours} часов и ${minutes} минут`;
+            }
+        }
     </script>
 </body>
 </html>
