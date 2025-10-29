@@ -8,7 +8,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Underdog&display=swap&subset=cyrillic" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
     <style>
-        /* Стили остаются без изменений, они хорошо написаны */
         body {
             margin: 0;
             padding: 0;
@@ -383,7 +382,6 @@
         const totalHearts = 7;
         let lastStepAudioPlayed = false;
         let confettiLaunched = false;
-        let day3Opened = false;
 
         const countdownElement = document.getElementById('countdown');
         const heartsContainer = document.querySelector('.hearts-container');
@@ -394,8 +392,14 @@
 
         // 👇 ФУНКЦИЯ ДЛЯ ПОКАЗА СЕКРЕТНОЙ КНОПКИ
         function showSecretButton() {
+            // Проверяем, не создана ли кнопка уже
+            if (document.querySelector('.secret-magic-button')) {
+                return;
+            }
+            
             // Создаем секретную кнопку
             const secretButton = document.createElement('button');
+            secretButton.className = 'secret-magic-button';
             secretButton.textContent = '🎵 Прикоснуться к магии';
             secretButton.style.cssText = `
                 position: fixed;
@@ -458,13 +462,6 @@
             if (saved) {
                 const openedIndices = JSON.parse(saved);
                 openedHearts = openedIndices.length;
-                
-                // Если 3-й день был открыт, показываем секретную кнопку
-                if (openedIndices.includes(2)) { // индекс 2 = день 3
-                    day3Opened = true;
-                    setTimeout(showSecretButton, 1000);
-                }
-                
                 return openedIndices;
             }
             return [];
@@ -472,7 +469,7 @@
 
         function createHearts() {
             // В тестовом режиме все дни доступны
-            const currentDay = TEST_MODE ? 7 : 1; // В тестовом режиме все 7 дней доступны
+            const currentDay = TEST_MODE ? 7 : 1;
 
             // Загружаем сохраненные открытые сердечки
             const savedOpenedHearts = loadOpenedHearts();
@@ -528,10 +525,12 @@
                 openedHearts++;
                 saveOpenedHearts();
                 
-                // 👇 СПЕЦИАЛЬНАЯ ЛОГИКА ДЛЯ 3-ГО ДНЯ
-                if (dayNumber === 3 && !day3Opened) {
-                    day3Opened = true;
-                    showSecretButton();
+                // 👇 ВАЖНО: показываем кнопку ТОЛЬКО когда открываем 3-й день
+                if (dayNumber === 3) {
+                    // Небольшая задержка чтобы пользователь увидел сообщение
+                    setTimeout(() => {
+                        showSecretButton();
+                    }, 500);
                 }
             }
         }
