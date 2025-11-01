@@ -291,6 +291,12 @@
             opacity: 0;
             transition: all 0.5s ease;
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            pointer-events: none;
+        }
+
+        .secret-magic-button.active {
+            opacity: 1;
+            pointer-events: auto;
         }
 
         .secret-magic-button:hover {
@@ -314,6 +320,12 @@
             opacity: 0;
             transition: all 0.5s ease;
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            pointer-events: none;
+        }
+
+        .water-elf-button.active {
+            opacity: 1;
+            pointer-events: auto;
         }
 
         .water-elf-button:hover {
@@ -463,6 +475,7 @@
         const totalHearts = 7;
         let lastStepAudioPlayed = false;
         let confettiLaunched = false;
+        let currentOpenedDay = null; // Текущий открытый день для модального окна
 
         const countdownElement = document.getElementById('countdown');
         const heartsContainer = document.querySelector('.hearts-container');
@@ -491,6 +504,7 @@
             openedHearts = 0;
             lastStepAudioPlayed = false;
             confettiLaunched = false;
+            currentOpenedDay = null;
             
             // Удаляем все секретные кнопки
             document.querySelectorAll('.secret-magic-button, .water-elf-button').forEach(btn => btn.remove());
@@ -523,56 +537,61 @@
 
         // 👇 ФУНКЦИЯ ДЛЯ ПОКАЗА СЕКРЕТНОЙ КНОПКИ (День 3)
         function showSecretButton() {
-            // Проверяем, не создана ли кнопка уже
-            if (document.querySelector('.secret-magic-button')) {
-                return;
+            let secretButton = document.querySelector('.secret-magic-button');
+            
+            if (!secretButton) {
+                // Создаем секретную кнопку
+                secretButton = document.createElement('button');
+                secretButton.className = 'secret-magic-button';
+                secretButton.textContent = '🎵 Прикоснуться к магии';
+                secretButton.title = 'Открывает сайт с волшебной палочкой';
+                
+                // Добавляем кнопку на страницу
+                document.body.appendChild(secretButton);
+                
+                // 👇 ПЕРЕАДРЕСАЦИЯ НА ТВОЙ САЙТ С ПАЛОЧКОЙ
+                secretButton.addEventListener('click', function() {
+                    window.open('https://krislokris07-sketch.github.io/wandyou/', '_blank');
+                });
             }
             
-            // Создаем секретную кнопку
-            const secretButton = document.createElement('button');
-            secretButton.className = 'secret-magic-button';
-            secretButton.textContent = '🎵 Прикоснуться к магии';
-            secretButton.title = 'Открывает сайт с волшебной палочкой';
-            
-            // Добавляем кнопку на страницу
-            document.body.appendChild(secretButton);
-            
-            // Плавно появляемся
+            // Показываем кнопку
             setTimeout(() => {
-                secretButton.style.opacity = '1';
+                secretButton.classList.add('active');
             }, 1000);
-            
-            // 👇 ПЕРЕАДРЕСАЦИЯ НА ТВОЙ САЙТ С ПАЛОЧКОЙ
-            secretButton.addEventListener('click', function() {
-                window.open('https://krislokris07-sketch.github.io/wandyou/', '_blank');
-            });
         }
 
         // 👇 ФУНКЦИЯ ДЛЯ ПОКАЗА КНОПКИ КВЕСТА ВОДЯНОГО ЭЛЬФА (День 4)
         function showWaterElfButton() {
-            // Проверяем, не создана ли кнопка уже
-            if (document.querySelector('.water-elf-button')) {
-                return;
+            let waterElfButton = document.querySelector('.water-elf-button');
+            
+            if (!waterElfButton) {
+                // Создаем кнопку квеста водяного эльфа
+                waterElfButton = document.createElement('button');
+                waterElfButton.className = 'water-elf-button';
+                waterElfButton.textContent = '💧 Квест водяного эльфа';
+                waterElfButton.title = 'Отправиться в приключение к водяному эльфу';
+                
+                // Добавляем кнопку на страницу
+                document.body.appendChild(waterElfButton);
+                
+                // 👇 ПЕРЕАДРЕСАЦИЯ НА КВЕСТ ВОДЯНОГО ЭЛЬФА
+                waterElfButton.addEventListener('click', function() {
+                    // ЗДЕСЬ ВСТАВЬ ССЫЛКУ НА СВОЙ КВЕСТ ВОДЯНОГО ЭЛЬФА
+                    window.open('https://example.com/water-elf-quest', '_blank');
+                });
             }
             
-            // Создаем кнопку квеста водяного эльфа
-            const waterElfButton = document.createElement('button');
-            waterElfButton.className = 'water-elf-button';
-            waterElfButton.textContent = '💧 Квест водяного эльфа';
-            waterElfButton.title = 'Отправиться в приключение к водяному эльфу';
-            
-            // Добавляем кнопку на страницу
-            document.body.appendChild(waterElfButton);
-            
-            // Плавно появляемся
+            // Показываем кнопку
             setTimeout(() => {
-                waterElfButton.style.opacity = '1';
+                waterElfButton.classList.add('active');
             }, 1000);
-            
-            // 👇 ПЕРЕАДРЕСАЦИЯ НА КВЕСТ ВОДЯНОГО ЭЛЬФА
-            waterElfButton.addEventListener('click', function() {
-                // ЗДЕСЬ ВСТАВЬ ССЫЛКУ НА СВОЙ КВЕСТ ВОДЯНОГО ЭЛЬФА
-                window.open('https://krislokris07-sketch.github.io/waterelf/');
+        }
+
+        // 👇 ФУНКЦИЯ ДЛЯ СКРЫТИЯ ВСЕХ СЕКРЕТНЫХ КНОПОК
+        function hideAllSecretButtons() {
+            document.querySelectorAll('.secret-magic-button, .water-elf-button').forEach(btn => {
+                btn.classList.remove('active');
             });
         }
 
@@ -710,6 +729,7 @@
         }
 
         function openGift(dayNumber) {
+            currentOpenedDay = dayNumber;
             chapterTextElement.textContent = config.gifts[dayNumber - 1];
             audioElement.src = config.audioFiles[dayNumber - 1];
             
@@ -741,6 +761,13 @@
                 }
                 
                 checkAllHeartsOpened();
+            } else {
+                // Если сердечко уже было открыто, все равно показываем соответствующую кнопку
+                if (dayNumber === 3) {
+                    showSecretButton();
+                } else if (dayNumber === 4) {
+                    showWaterElfButton();
+                }
             }
         }
 
@@ -759,10 +786,14 @@
             }
         }
 
+        // 👇 ОБНОВЛЯЕМ ОБРАБОТЧИКИ ЗАКРЫТИЯ МОДАЛЬНОГО ОКНА
         closeBtn.addEventListener('click', () => {
             modal.style.display = 'none';
             audioElement.pause();
             audioElement.currentTime = 0;
+            // Скрываем все секретные кнопки при закрытии окна
+            hideAllSecretButtons();
+            currentOpenedDay = null;
         });
 
         window.addEventListener('click', (event) => {
@@ -770,6 +801,9 @@
                 modal.style.display = 'none';
                 audioElement.pause();
                 audioElement.currentTime = 0;
+                // Скрываем все секретные кнопки при закрытии окна
+                hideAllSecretButtons();
+                currentOpenedDay = null;
             }
         });
 
