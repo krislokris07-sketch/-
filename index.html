@@ -274,6 +274,35 @@
             background: rgba(0, 122, 204, 0.9);
         }
 
+        .fairy-button {
+            position: fixed;
+            bottom: 200px;
+            right: 20px;
+            background: rgba(189, 224, 181, 0.9);
+            color: #1a2f1a;
+            border: 2px solid #8fbc8f;
+            border-radius: 20px;
+            padding: 10px 15px;
+            font-family: cursive;
+            font-size: 0.9em;
+            cursor: pointer;
+            z-index: 1000;
+            opacity: 0;
+            transition: all 0.5s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            pointer-events: none;
+        }
+
+        .fairy-button.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .fairy-button:hover {
+            transform: scale(1.05);
+            background: rgba(189, 224, 181, 1);
+        }
+
         @media (max-width: 400px) {
             .container {
                 margin-top: 20px;
@@ -306,7 +335,8 @@
             }
 
             .secret-magic-button,
-            .water-elf-button {
+            .water-elf-button,
+            .fairy-button {
                 bottom: 20px;
                 right: 10px;
                 font-size: 0.8em;
@@ -315,6 +345,10 @@
 
             .water-elf-button {
                 bottom: 70px;
+            }
+
+            .fairy-button {
+                bottom: 120px;
             }
         }
     </style>
@@ -356,7 +390,7 @@
             plaqueImage: 'плашка.png',
             heartImage: 'сердечко.png',
             gifts: [
-                "Глава 1. Тайна Шёпота Фей\n\n«Куда подевался молочный зуб того крохи? — перешёптываются феи у изголовья. — Говорят, он оставил его там, где рождаются самые смелые сны...»",
+                "Глава 1. Тайна Шёпота Фей\n\n«Куда подевался молочный зуб того крохи? — перешёптываются феи у изголовья. — Чтобы узнать ответ, отправляйся в лес и найди ту, что знает все тайны...»",
                 "Глава 2. Мудрость Дремучего Леса\n\n«Старый дуб, что знает все истории на свете, приоткрыл свою потайную дверцу. Там, среди мудрых страниц, спрятан ключ к новой приключенческой саге».",
                 
                 // 👇 ДЕНЬ 3 - С НАМЁКОМ НА СЕКРЕТНУЮ КНОПКУ
@@ -394,6 +428,32 @@
         const chapterTextElement = document.getElementById('chapterText');
         const audioElement = document.getElementById('chapterAudio');
         const closeBtn = document.querySelector('.close');
+
+        // 👇 ФУНКЦИЯ ДЛЯ ПОКАЗА КНОПКИ ФЕЙ (День 1)
+        function showFairyButton() {
+            let fairyButton = document.querySelector('.fairy-button');
+            
+            if (!fairyButton) {
+                // Создаем кнопку фей
+                fairyButton = document.createElement('button');
+                fairyButton.className = 'fairy-button';
+                fairyButton.textContent = '🧚 Отправиться в лес фей';
+                fairyButton.title = 'Найти фею, что знает тайну молочного зуба';
+                
+                // Добавляем кнопку на страницу
+                document.body.appendChild(fairyButton);
+                
+                // 👇 ПЕРЕАДРЕСАЦИЯ НА ИГРУ С ФЕЯМИ
+                fairyButton.addEventListener('click', function() {
+                    window.open('https://krislokris07-sketch.github.io/fairylight/', '_blank');
+                });
+            }
+            
+            // Показываем кнопку
+            setTimeout(() => {
+                fairyButton.classList.add('active');
+            }, 1000);
+        }
 
         // 👇 ФУНКЦИЯ ДЛЯ ПОКАЗА СЕКРЕТНОЙ КНОПКИ (День 3)
         function showSecretButton() {
@@ -438,7 +498,7 @@
                 // 👇 ПЕРЕАДРЕСАЦИЯ НА КВЕСТ ВОДЯНОГО ЭЛЬФА
                 waterElfButton.addEventListener('click', function() {
                     // ЗДЕСЬ ВСТАВЬ ССЫЛКУ НА СВОЙ КВЕСТ ВОДЯНОГО ЭЛЬФА
-                    window.open('https://krislokris07-sketch.github.io/waterelf/');
+                    window.open('https://example.com/water-elf-quest', '_blank');
                 });
             }
             
@@ -450,7 +510,7 @@
 
         // 👇 ФУНКЦИЯ ДЛЯ СКРЫТИЯ ВСЕХ СЕКРЕТНЫХ КНОПОК
         function hideAllSecretButtons() {
-            document.querySelectorAll('.secret-magic-button, .water-elf-button').forEach(btn => {
+            document.querySelectorAll('.secret-magic-button, .water-elf-button, .fairy-button').forEach(btn => {
                 btn.classList.remove('active');
             });
         }
@@ -620,7 +680,12 @@
                 saveOpenedHearts();
                 
                 // 👇 ВАЖНО: показываем кнопки в зависимости от дня
-                if (dayNumber === 3) {
+                if (dayNumber === 1) {
+                    // День 1 - кнопка фей
+                    setTimeout(() => {
+                        showFairyButton();
+                    }, 2000);
+                } else if (dayNumber === 3) {
                     // День 3 - кнопка музыки
                     setTimeout(() => {
                         showSecretButton();
@@ -635,7 +700,9 @@
                 checkAllHeartsOpened();
             } else {
                 // Если сердечко уже было открыто, все равно показываем соответствующую кнопку
-                if (dayNumber === 3) {
+                if (dayNumber === 1) {
+                    showFairyButton();
+                } else if (dayNumber === 3) {
                     showSecretButton();
                 } else if (dayNumber === 4) {
                     showWaterElfButton();
