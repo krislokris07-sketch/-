@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
      <link rel="icon" type="image/png" href="иконка.png">
-    <title>Для храбрых сердцем! - ТЕСТОВЫЙ РЕЖИМ</title>
+    <title>Для храбрых сердцем!</title>
     <link href="https://fonts.googleapis.com/css2?family=Underdog&display=swap&subset=cyrillic" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
     <style>
@@ -215,65 +215,6 @@
             text-decoration: line-through;
         }
 
-        /* Стили для тестовой панели */
-        .test-panel {
-            position: fixed;
-            top: 10px;
-            left: 10px;
-            background: rgba(0, 0, 0, 0.8);
-            padding: 15px;
-            border-radius: 10px;
-            border: 2px solid #ff9900;
-            z-index: 1000;
-            color: white;
-            font-family: Arial, sans-serif;
-            font-size: 14px;
-            max-width: 300px;
-        }
-
-        .test-panel h3 {
-            margin: 0 0 10px 0;
-            color: #ff9900;
-            text-align: center;
-        }
-
-        .test-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-
-        .test-button {
-            background: #4CAF50;
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 12px;
-        }
-
-        .test-button:hover {
-            background: #45a049;
-        }
-
-        .test-button.reset {
-            background: #f44336;
-        }
-
-        .test-button.reset:hover {
-            background: #da190b;
-        }
-
-        .current-day-info {
-            margin-top: 10px;
-            padding: 8px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 5px;
-            font-size: 12px;
-            text-align: center;
-        }
-
         /* Стили для секретных кнопок */
         .secret-magic-button {
             position: fixed;
@@ -364,14 +305,6 @@
                 max-width: 280px;
             }
 
-            .test-panel {
-                position: relative;
-                top: auto;
-                left: auto;
-                margin: 10px auto;
-                max-width: 90%;
-            }
-
             .secret-magic-button,
             .water-elf-button {
                 bottom: 20px;
@@ -387,30 +320,12 @@
     </style>
 </head>
 <body>
-    <!-- ТЕСТОВАЯ ПАНЕЛЬ -->
-    <div class="test-panel">
-        <h3>🔧 ТЕСТОВЫЙ РЕЖИМ</h3>
-        <div class="test-buttons">
-            <button class="test-button" onclick="setTestDay(1)">День 1</button>
-            <button class="test-button" onclick="setTestDay(2)">День 2</button>
-            <button class="test-button" onclick="setTestDay(3)">День 3 (секретная кнопка)</button>
-            <button class="test-button" onclick="setTestDay(4)">День 4 (квест водяного эльфа)</button>
-            <button class="test-button" onclick="setTestDay(5)">День 5</button>
-            <button class="test-button" onclick="setTestDay(6)">День 6</button>
-            <button class="test-button" onclick="setTestDay(7)">День 7 (финал)</button>
-            <button class="test-button reset" onclick="resetTest()">Сбросить всё</button>
-        </div>
-        <div class="current-day-info" id="currentDayInfo">
-            Текущий день: загрузка...
-        </div>
-    </div>
-
     <div class="container">
-        <h1 class="main-title">Заколдованный<br>отсчет - ТЕСТ</h1>
+        <h1 class="main-title">Заколдованный<br>отсчет</h1>
         
         <div class="subtitle-block">
-            <p class="fairy-text">ТЕСТОВЫЙ РЕЖИМ: Используй панель слева для настройки дней</p>
-            <p class="fairy-text">Сейчас доступны дни: <span id="availableDays">загрузка...</span></p>
+            <p class="fairy-text">Не спеши, добрый молодец, не торопи, красна девица...</p>
+            <p class="fairy-text">Сказка начнётся, как только ночь соткёт из лунного света свою серебряную нить, а это случится...</p>
         </div>
         
         <div id="countdown" class="countdown-text">совсем скоро</div>
@@ -435,10 +350,6 @@
     </div>
 
     <script>
-        // 👇 ТЕСТОВЫЕ НАСТРОЙКИ
-        const TEST_MODE = true; // Включить тестовый режим
-        let forcedCurrentDay = null; // Принудительно установленный день для тестирования
-
         const config = {
             birthdayDate: '2025-12-24',
             backgroundImage: 'фон_основной.jpg',
@@ -483,57 +394,6 @@
         const chapterTextElement = document.getElementById('chapterText');
         const audioElement = document.getElementById('chapterAudio');
         const closeBtn = document.querySelector('.close');
-        const currentDayInfo = document.getElementById('currentDayInfo');
-        const availableDaysElement = document.getElementById('availableDays');
-
-        // 👇 ТЕСТОВЫЕ ФУНКЦИИ
-        function setTestDay(day) {
-            forcedCurrentDay = day;
-            localStorage.setItem('testForcedDay', day);
-            updateTestInfo();
-            createHearts();
-            
-            // Показываем уведомление
-            alert(`✅ Установлен тестовый день: ${day}\n\nТеперь доступны сердечки с 1 по ${day}\n\nДля тестирования:\n- День 3: открой сердечко №3 → появится кнопка музыки\n- День 4: открой сердечко №4 → появится кнопка квеста водяного эльфа`);
-        }
-
-        function resetTest() {
-            forcedCurrentDay = null;
-            localStorage.removeItem('testForcedDay');
-            localStorage.removeItem('openedHearts');
-            openedHearts = 0;
-            lastStepAudioPlayed = false;
-            confettiLaunched = false;
-            currentOpenedDay = null;
-            
-            // Удаляем все секретные кнопки
-            document.querySelectorAll('.secret-magic-button, .water-elf-button').forEach(btn => btn.remove());
-            
-            updateTestInfo();
-            createHearts();
-            updateCountdown();
-            alert('🧹 Тестовый режим сброшен! Все настройки восстановлены.');
-        }
-
-        function updateTestInfo() {
-            const currentDay = getCurrentDay();
-            currentDayInfo.textContent = `Текущий день: ${currentDay}`;
-            availableDaysElement.textContent = `1-${currentDay}`;
-        }
-
-        function getCurrentDay() {
-            if (TEST_MODE && forcedCurrentDay !== null) {
-                return forcedCurrentDay;
-            }
-            
-            // Обычная логика расчета дня
-            const now = new Date();
-            const birthday = new Date(config.birthdayDate);
-            const startDate = new Date(birthday);
-            startDate.setDate(birthday.getDate() - 6);
-            const daysPassed = Math.floor((now - startDate) / (1000 * 60 * 60 * 24));
-            return Math.min(Math.max(daysPassed + 1, 1), 7);
-        }
 
         // 👇 ФУНКЦИЯ ДЛЯ ПОКАЗА СЕКРЕТНОЙ КНОПКИ (День 3)
         function showSecretButton() {
@@ -578,7 +438,7 @@
                 // 👇 ПЕРЕАДРЕСАЦИЯ НА КВЕСТ ВОДЯНОГО ЭЛЬФА
                 waterElfButton.addEventListener('click', function() {
                     // ЗДЕСЬ ВСТАВЬ ССЫЛКУ НА СВОЙ КВЕСТ ВОДЯНОГО ЭЛЬФА
-                    window.open('https://krislokris07-sketch.github.io/waterelf/');
+                    window.open('https://example.com/water-elf-quest', '_blank');
                 });
             }
             
@@ -690,8 +550,20 @@
         }
 
         function createHearts() {
-            const currentDay = getCurrentDay();
+            const now = new Date();
+            const birthday = new Date(config.birthdayDate);
             
+            // Начинаем отсчет за 6 дней до ДР (18 декабря для ДР 24 декабря)
+            const startDate = new Date(birthday);
+            startDate.setDate(birthday.getDate() - 6);
+            
+            // Определяем, сколько дней прошло с начала отсчета
+            const daysPassed = Math.floor((now - startDate) / (1000 * 60 * 60 * 24));
+            
+            // Определяем, какой день сейчас (от 1 до 7)
+            // День 1 = 18 декабря, день 7 = 24 декабря
+            const currentDay = Math.min(Math.max(daysPassed + 1, 1), 7);
+
             // Загружаем сохраненные открытые сердечки
             const savedOpenedHearts = loadOpenedHearts();
 
@@ -808,21 +680,9 @@
         });
 
         // Инициализация
-        function init() {
-            // Загружаем сохраненный тестовый день
-            const savedTestDay = localStorage.getItem('testForcedDay');
-            if (TEST_MODE && savedTestDay) {
-                forcedCurrentDay = parseInt(savedTestDay);
-            }
-            
-            updateTestInfo();
-            updateCountdown();
-            createHearts();
-            setInterval(updateCountdown, 60000);
-        }
-
-        // Запускаем инициализацию при загрузке страницы
-        init();
+        updateCountdown();
+        createHearts();
+        setInterval(updateCountdown, 60000);
     </script>
 </body>
 </html>
