@@ -215,6 +215,29 @@
             text-decoration: line-through;
         }
 
+        /* Стили для кнопки квеста */
+        .quest-button {
+            background: linear-gradient(135deg, #87CEEB, #1E90FF);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 12px 25px;
+            font-family: 'Underdog', cursive;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 15px auto;
+            display: block;
+            text-decoration: none;
+            max-width: 250px;
+            box-shadow: 0 4px 15px rgba(135, 206, 235, 0.4);
+        }
+
+        .quest-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(135, 206, 235, 0.6);
+        }
+
         @media (max-width: 400px) {
             .container {
                 margin-top: 20px;
@@ -275,6 +298,10 @@
             <audio id="chapterAudio" class="audio-player" controls>
                 Твой браузер не поддерживает аудио
             </audio>
+            <!-- Кнопка для квеста (будет показана только для главы 4) -->
+            <a id="questButton" class="quest-button" href="https://krislokris07-sketch.github.io/waterelf/" target="_blank" style="display: none;">
+                💧 Отправиться в квест Водяного Эльфа
+            </a>
         </div>
     </div>
 
@@ -320,6 +347,7 @@
         const chapterTextElement = document.getElementById('chapterText');
         const audioElement = document.getElementById('chapterAudio');
         const closeBtn = document.querySelector('.close');
+        const questButton = document.getElementById('questButton');
 
         // 👇 ФУНКЦИЯ ДЛЯ ПОКАЗА СЕКРЕТНОЙ КНОПКИ
         function showSecretButton() {
@@ -373,6 +401,20 @@
             secretButton.addEventListener('click', function() {
                 window.open('https://krislokris07-sketch.github.io/wandyou/', '_blank');
             });
+        }
+
+        // 👇 ФУНКЦИЯ ДЛЯ УПРАВЛЕНИЯ КНОПКОЙ КВЕСТА
+        function showQuestButton(show) {
+            if (show) {
+                questButton.style.display = 'block';
+                // Плавное появление
+                setTimeout(() => {
+                    questButton.style.opacity = '1';
+                    questButton.style.transform = 'scale(1)';
+                }, 100);
+            } else {
+                questButton.style.display = 'none';
+            }
         }
 
         // Функция для сохранения состояния в localStorage
@@ -524,6 +566,13 @@
             chapterTextElement.textContent = config.gifts[dayNumber - 1];
             audioElement.src = config.audioFiles[dayNumber - 1];
             
+            // 👇 УПРАВЛЯЕМ КНОПКОЙ КВЕСТА - ПОКАЗЫВАЕМ ТОЛЬКО ДЛЯ ГЛАВЫ 4
+            if (dayNumber === 4) {
+                showQuestButton(true);
+            } else {
+                showQuestButton(false);
+            }
+            
             audioElement.play().catch(e => {
                 console.log("Автовоспроизведение заблокировано");
             });
@@ -569,6 +618,8 @@
             modal.style.display = 'none';
             audioElement.pause();
             audioElement.currentTime = 0;
+            // Скрываем кнопку квеста при закрытии модального окна
+            showQuestButton(false);
         });
 
         window.addEventListener('click', (event) => {
@@ -576,6 +627,8 @@
                 modal.style.display = 'none';
                 audioElement.pause();
                 audioElement.currentTime = 0;
+                // Скрываем кнопку квеста при закрытии модального окна
+                showQuestButton(false);
             }
         });
 
